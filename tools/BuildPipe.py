@@ -7,8 +7,7 @@ import typing
 import zipfile
 from abc import ABC
 
-import simplejson as json
-import json as old_json
+import json
 
 HOME = os.path.dirname(__file__)
 
@@ -281,8 +280,8 @@ class JsonMinifierTask(AbstractBuildStage):
             if file.endswith(".json"):
                 view.write(
                     file,
-                    old_json.dumps(
-                        old_json.loads(view.read(file).decode("utf-8"))
+                    json.dumps(
+                        json.loads(view.read(file).decode("utf-8"))
                     ).encode("utf-8"),
                 )
 
@@ -395,9 +394,9 @@ class FilePrefixRenameTask(FileRenameTask):
     def __init__(self, renames_from, renames_to):
         self.renames_from = renames_from
         self.renames_to = renames_to
-        super().__init__(self.rename)
+        super().__init__(self.rename_task)
 
-    def rename(self, file: str) -> str:
+    def rename_task(self, file: str) -> str:
         if file.startswith(self.renames_from):
             return self.renames_to + file.removeprefix(self.renames_from)
         return file
@@ -439,127 +438,3 @@ class NuitkaBuild(AbstractBuildStage):
             build_output_dir + "/" + self.executable_name,
         )
 
-
-"""
-class CustomCodePatcher(AbstractBuildStage):
-    def execute_on(self, view: ProjectView, build_output_dir: str, build_manager):
-        view.write(
-            "mcpython/shared.py",
-            view.read("mcpython/shared.py").replace(
-                "dev_environment = True".encode("utf-8"),
-                "dev_environment = False".encode("utf-8"),
-                1,
-            ),
-        )
-        view.write(
-            "tools/installer.py",
-            view.read("tools/installer.py").replace(
-                'subprocess.Popen([sys.executable, "./__main__.py", "--data-gen", "--exit-after-data-gen", "--no-window"], stdout=sys.stdout)'.encode(
-                    "utf-8"
-                ),
-                b"",
-                1,
-            ),
-        )
-        # data = json.loads(view.read("version.json").decode("utf-8"))
-        view.write(
-            "version.json",
-            json.dumps(
-                {
-                    "name": build_manager.build_name,
-                    "id": build_manager.version_id,
-                },
-                indent="  ",
-            ).encode("utf-8"),
-        )
-
-
-class UpdateLicenceHeadersPreparation(AbstractProjectPreparation):
-    def execute_in(self, directory: str, build_manager):
-        subprocess.call(
-            [sys.executable, os.path.join(HOME, "update_licence_headers.py"), directory]
-        )
-
-
-CLIENT_FILE_STRIPPER = FileFilterTask(
-    lambda file: not (
-        file.startswith("mcpython/client")
-        or file.startswith("assets/minecraft/textures")
-    )
-)
-
-
-DEFAULT_BUILD_INSTANCE = ProjectBuildManager()
-
-DEFAULT_BUILD_INSTANCE.add_preparation_stage(BlackCodeFormattingPreperation())
-DEFAULT_BUILD_INSTANCE.add_preparation_stage(UpdateLicenceHeadersPreparation())
-
-# Filter the file tree
-DEFAULT_BUILD_INSTANCE.add_stage(
-    FileFilterTask(
-        lambda file: not (
-            file.startswith("resources/source")
-            or file == "version_launcher.json"
-            or file.startswith("home")
-            or file.startswith("assets")
-            or file.startswith("data")
-            or file.startswith("home")
-            or file.startswith("dev")
-            or ".git" in file
-            or ".idea" in file
-            or file.startswith("dev/build")
-            or "__pycache__" in file
-            or file == "tools/source.zip"
-        )
-    )
-)
-DEFAULT_BUILD_INSTANCE.add_stage(FilePrefixRenamerTask("resources/generated/", ""))
-DEFAULT_BUILD_INSTANCE.add_stage(FilePrefixRenamerTask("resources/main/", ""))
-DEFAULT_BUILD_INSTANCE.add_stage(FilePrefixRenamerTask("licences/", ""))
-
-# General stuff not needed
-
-DEFAULT_BUILD_INSTANCE.add_stage(CustomCodePatcher())
-DEFAULT_BUILD_INSTANCE.add_stage(DumpTask("dev.zip", as_zip=True))
-DEFAULT_BUILD_INSTANCE.add_stage(
-    BuildSplitStage(CLIENT_FILE_STRIPPER, DumpTask("dedicated.zip", as_zip=True))
-)
-DEFAULT_BUILD_INSTANCE.add_stage(
-    BuildSplitStage(
-        PyMinifierTask(),
-        JsonMinifierTask(),
-        FileFilterTask(
-            lambda file: not (
-                file.startswith("tools/mdk")
-                or (file.startswith("doc") and "changelog.txt" not in file)
-            )
-        ),
-        FilePrefixRenamerTask("doc/", ""),
-        FilePrefixRenamerTask("tools/", ""),
-        DumpTask("minified.zip", as_zip=True),
-        CLIENT_FILE_STRIPPER,
-        DumpTask("dedicated_minified.zip", as_zip=True),
-    )
-)
-
-
-def main(*argv):
-    build_name = input("build name: ") if len(argv) == 0 else argv[0]
-    with open(HOME + "/config.json") as f:
-        config = json.load(f)
-
-    output_folder = config.setdefault("output_folder", HOME + "/builds")
-    config["version_id"] += 1
-    version_id = config["version_id"]
-
-    with open(HOME + "/config.json", mode="w") as f:
-        json.dump(config, f)
-
-    DEFAULT_BUILD_INSTANCE.build_name = build_name
-    DEFAULT_BUILD_INSTANCE.version_id = version_id
-    DEFAULT_BUILD_INSTANCE.run(os.path.dirname(HOME), output_folder + "/" + build_name)
-
-
-if __name__ == "__main__":
-    main(*sys.argv[1:])
-"""

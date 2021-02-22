@@ -26,3 +26,11 @@ class LaunchWrapper:
             may use also async for handling and waiting for stuff
         """
 
+    def launch(self):
+        import mcpython.ProcessManager
+
+        mcpython.ProcessManager.execute_on("rendering", lambda handler: print("Hello World!"))
+
+        mcpython.ProcessManager.start_processes()
+        mcpython.ProcessManager.maintain()
+

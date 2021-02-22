@@ -2,15 +2,19 @@ import multiprocessing
 import threading
 import marshal
 import pickle
+import traceback
+import types
 import typing
 
 
-def serialize_task(func, args, kwargs) -> bytes:
-    pass
+def serialize_task(func, args=tuple(), kwargs=None) -> bytes:
+    return pickle.dumps((marshal.dumps(func.__code__), args, kwargs))
 
 
-def deserialize_task(data: bytes) -> typing.Tuple[typing.Callable, typing.List, typing.Dict]:
-    pass
+def deserialize_task(data: bytes) -> typing.Tuple[typing.Callable, typing.List, typing.Optional[typing.Dict]]:
+    code, args, kwargs = pickle.loads(data)
+    code = marshal.loads(code)
+    return types.FunctionType(code, globals()), args, kwargs
 
 
 class RemoteProcessHandler:
@@ -24,23 +28,70 @@ class RemoteProcessHandler:
             self.fetch()
 
     def fetch(self):
-        pass
+        while not self.on_process_queue.empty():
+            target = deserialize_task(self.on_process_queue.get())
+            try:
+                if target[2] is None:
+                    target[0](self, *target[1])
+                else:
+                    target[0](self, *target[1], **target[2])
+            except:
+                print(target)
+                traceback.print_exc()
 
     def execute_on(self, process_name: str, task, *args, **kwargs):
-        pass
+        self.other_process_queue.put((process_name, serialize_task(task, args, kwargs if len(kwargs) > 0 else None)))
 
 
 def handler_process():
     pass
 
 
-def spawn_process(name: str):
-    process = multiprocessing.Process()
+def spawn_process(name: str, target=None):
     handler = RemoteProcessHandler(name)
+    process = multiprocessing.Process(target=handler.main if target is not None else handler.fetch)
+
+    if target is not None:
+        handler.on_process_queue.put(serialize_task(target))
+
     PROCESSES[name] = process
     PROCESS_HANDLERS[name] = handler
 
 
-PROCESSES = {}
-PROCESS_HANDLERS = {}
+def start_processes():
+    for process in PROCESSES.values():
+        process.start()
+
+
+def maintain():
+    while True:
+        for handler in PROCESS_HANDLERS.values():
+            while not handler.other_process_queue.empty():
+                target_process, data = handler.other_process_queue.get()
+                if target_process == "main":
+                    func, args, kwargs = deserialize_task(data)
+
+                    # todo: try-except
+                    if kwargs is not None:
+                        func(*args, **kwargs)
+                    else:
+                        func(*args)
+                else:
+                    # todo: check for name existence
+                    PROCESS_HANDLERS[target_process].on_process_queue.put(data)
+
+        for process in PROCESSES.values():
+            if not process.is_alive():
+                break
+        else:
+            continue
+
+
+PROCESSES: typing.Dict[str, multiprocessing.Process] = {}
+PROCESS_HANDLERS: typing.Dict[str, RemoteProcessHandler] = {}
+
+
+# Only for main process work
+def execute_on(process: str, func, *args, **kwargs):
+    PROCESS_HANDLERS[process].on_process_queue.put(serialize_task(func, args, kwargs if len(kwargs) > 0 else None))
 

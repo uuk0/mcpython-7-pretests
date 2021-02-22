@@ -1,12 +1,25 @@
 
 
+def rendering(handler):
+    import pyglet
+    import mcpython.rendering.Window
+
+    window = mcpython.rendering.Window.Window()
+    handler.window = window
+
+    pyglet.clock.schedule_interval(handler.fetch, 0.3)
+    pyglet.app.run()
+
+    handler.stop()
+
+
 class LaunchWrapper:
     def __init__(self):
         pass
 
     def setup(self):
         import mcpython.ProcessManager
-        mcpython.ProcessManager.spawn_process("rendering")
+        mcpython.ProcessManager.spawn_process("rendering", target=rendering)
         mcpython.ProcessManager.spawn_process("world_handling")
         mcpython.ProcessManager.spawn_process("world_generation")
         mcpython.ProcessManager.spawn_process("network")
@@ -29,7 +42,10 @@ class LaunchWrapper:
     def launch(self):
         import mcpython.ProcessManager
 
-        mcpython.ProcessManager.execute_on("rendering", lambda handler: print("Hello World!"))
+        # This are tests for testing cross-process task sending
+        # mcpython.ProcessManager.execute_on("rendering", lambda handler: print("Hello World!"))
+        # mcpython.ProcessManager.execute_on("world_handling", lambda handler: handler.execute_on("main", lambda: print("Back!")))
+        # mcpython.ProcessManager.execute_on("world_handling", lambda handler: handler.execute_on("network", lambda h: print("Cross!")))
 
         mcpython.ProcessManager.start_processes()
         mcpython.ProcessManager.maintain()

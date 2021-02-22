@@ -1,5 +1,3 @@
-
-
 def rendering(handler):
     import pyglet
     import mcpython.rendering.Window
@@ -19,6 +17,7 @@ class LaunchWrapper:
 
     def setup(self):
         import mcpython.ProcessManager
+
         mcpython.ProcessManager.spawn_process("rendering", target=rendering)
         mcpython.ProcessManager.spawn_process("world_handling")
         mcpython.ProcessManager.spawn_process("world_generation")
@@ -49,4 +48,3 @@ class LaunchWrapper:
 
         mcpython.ProcessManager.start_processes()
         mcpython.ProcessManager.maintain()
-

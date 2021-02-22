@@ -97,11 +97,17 @@ class ProjectView:
             if not file_filter(file):
                 continue
 
+            f = os.path.join(directory, file)
+            d = os.path.dirname(f)
+
+            if not os.path.exists(d):
+                os.makedirs(d)
+
             if file in self.path_cache:
-                with open(os.path.join(directory, file), mode="wb") as f:
+                with open(f, mode="wb") as f:
                     f.write(self.path_cache[file])
             elif file in self.path_lookup:
-                shutil.copyfile(self.path_lookup[file], os.path.join(directory, file))
+                shutil.copyfile(self.path_lookup[file], f)
             else:
                 print("skipping file", file, "as the file is not found")
 
@@ -280,9 +286,9 @@ class JsonMinifierTask(AbstractBuildStage):
             if file.endswith(".json"):
                 view.write(
                     file,
-                    json.dumps(
-                        json.loads(view.read(file).decode("utf-8"))
-                    ).encode("utf-8"),
+                    json.dumps(json.loads(view.read(file).decode("utf-8"))).encode(
+                        "utf-8"
+                    ),
                 )
 
 
@@ -437,4 +443,3 @@ class NuitkaBuild(AbstractBuildStage):
             self.look_for_output.format(tmp=tmp.name, output_dir=build_output_dir),
             build_output_dir + "/" + self.executable_name,
         )
-

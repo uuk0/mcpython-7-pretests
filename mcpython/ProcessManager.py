@@ -11,7 +11,9 @@ def serialize_task(func, args=tuple(), kwargs=None) -> bytes:
     return pickle.dumps((marshal.dumps(func.__code__), args, kwargs))
 
 
-def deserialize_task(data: bytes) -> typing.Tuple[typing.Callable, typing.List, typing.Optional[typing.Dict]]:
+def deserialize_task(
+    data: bytes,
+) -> typing.Tuple[typing.Callable, typing.List, typing.Optional[typing.Dict]]:
     code, args, kwargs = pickle.loads(data)
     code = marshal.loads(code)
     return types.FunctionType(code, globals()), args, kwargs
@@ -41,10 +43,21 @@ class RemoteProcessHandler:
                 traceback.print_exc()
 
     def execute_on(self, process_name: str, task, *args, **kwargs):
-        self.other_process_queue.put((process_name, serialize_task(task, args, kwargs if len(kwargs) > 0 else None)))
+        self.other_process_queue.put(
+            (
+                process_name,
+                serialize_task(task, args, kwargs if len(kwargs) > 0 else None),
+            )
+        )
 
     def stop(self):
-        self.execute_on("main", lambda: __import__("mcpython.ProcessManager").ProcessManager.execute_on_all(lambda handler: handler.this_stop()))
+        print("stopping game from process", self.name)
+        self.execute_on(
+            "main",
+            lambda: __import__("mcpython.ProcessManager").ProcessManager.execute_on_all(
+                lambda handler: handler.this_stop()
+            ),
+        )
         self.execute_on("main", lambda: __import__("sys").exit())
 
     def this_stop(self):
@@ -53,7 +66,9 @@ class RemoteProcessHandler:
 
 def spawn_process(name: str, target=None):
     handler = RemoteProcessHandler(name)
-    process = multiprocessing.Process(target=handler.main if target is not None else handler.fetch)
+    process = multiprocessing.Process(
+        target=handler.main if target is not None else handler.fetch
+    )
 
     if target is not None:
         handler.on_process_queue.put(serialize_task(target))
@@ -97,11 +112,12 @@ PROCESS_HANDLERS: typing.Dict[str, RemoteProcessHandler] = {}
 
 # Only for main process work
 def execute_on(process: str, func, *args, **kwargs):
-    PROCESS_HANDLERS[process].on_process_queue.put(serialize_task(func, args, kwargs if len(kwargs) > 0 else None))
+    PROCESS_HANDLERS[process].on_process_queue.put(
+        serialize_task(func, args, kwargs if len(kwargs) > 0 else None)
+    )
 
 
 def execute_on_all(func, *args, **kwargs):
     task = serialize_task(func, args, kwargs if len(kwargs) > 0 else None)
     for handler in PROCESS_HANDLERS.values():
         handler.on_process_queue.put(task)
-

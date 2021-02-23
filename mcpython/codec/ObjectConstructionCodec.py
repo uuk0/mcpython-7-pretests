@@ -19,10 +19,15 @@ class CodecArgSource:
     def add_codec_list(self, codec: AbstractCodec):
         pass
 
-    def add_conditional_codec(self, codec: AbstractCodec, condition: typing.Callable[[typing.Any], bool]):
+    def add_conditional_codec(
+        self, codec: AbstractCodec, condition: typing.Callable[[typing.Any], bool]
+    ):
         pass
 
     def decode_from(self, data_tree: dict):
+        pass
+
+    def encode_into(self, entry, data_tree: dict):
         pass
 
 
@@ -40,20 +45,43 @@ class Codec(AbstractCodec):
         self.arguments = [], {}
         self.attributes = {}
 
-    def register_list_argument(self, source, converter: typing.Callable = None):
-        self.arguments[0].append((CodecArgSource.from_any(source), converter))
+    def register_list_argument(
+        self,
+        source,
+        converter: typing.Callable = None,
+        validator: typing.Callable[[typing.Any], bool] = None,
+    ):
+        self.arguments[0].append(
+            (CodecArgSource.from_any(source), converter, validator)
+        )
         return self
 
     def register_keyword_argument(
-        self, source, name: str, converter: typing.Callable = None
+        self,
+        source,
+        name: str,
+        converter: typing.Callable = None,
+        validator: typing.Callable[[typing.Any], bool] = None,
     ):
-        self.arguments[1][name] = (CodecArgSource.from_any(source), converter)
+        self.arguments[1][name] = (
+            CodecArgSource.from_any(source),
+            converter,
+            validator,
+        )
         return self
 
     def register_attribute_setter(
-        self, source, attr_name: str, converter: typing.Callable = None
+        self,
+        source,
+        attr_name: str,
+        converter: typing.Callable = None,
+        validator: typing.Callable[[typing.Any], bool] = None,
     ):
-        self.attributes[attr_name] = (CodecArgSource.from_any(source), converter)
+        self.attributes[attr_name] = (
+            CodecArgSource.from_any(source),
+            converter,
+            validator,
+        )
         return self
 
     def decode(self, data):

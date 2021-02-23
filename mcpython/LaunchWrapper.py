@@ -20,8 +20,8 @@ class LaunchWrapper:
 
         mcpython.ProcessManager.spawn_process("rendering", target=rendering)
         mcpython.ProcessManager.spawn_process("world_handling")
-        mcpython.ProcessManager.spawn_process("world_generation")
-        mcpython.ProcessManager.spawn_process("network")
+        mcpython.ProcessManager.spawn_process("world_generation", async_process=True)
+        mcpython.ProcessManager.spawn_process("network", async_process=True)
 
         """
         How split on processes?

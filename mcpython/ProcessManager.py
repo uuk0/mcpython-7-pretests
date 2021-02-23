@@ -42,6 +42,34 @@ class RemoteProcessHandler:
                 print(target)
                 traceback.print_exc()
 
+    def async_workflow(self):
+        import asyncio
+
+        asyncio.run(self.async_main())
+
+    async def async_main(self):
+        while True:
+            await self.fetch_async()
+
+    async def fetch_async(self):
+        while not self.on_process_queue.empty():
+            target = deserialize_task(self.on_process_queue.get())
+            try:
+                if target[2] is None:
+                    t = target[0](self, *target[1])
+                else:
+                    t = target[0](self, *target[1], **target[2])
+
+                # todo: can we do better than this?
+                try:
+                    await t
+                except TypeError:
+                    pass
+
+            except:
+                print(target)
+                traceback.print_exc()
+
     def execute_on(self, process_name: str, task, *args, **kwargs):
         self.other_process_queue.put(
             (
@@ -64,11 +92,14 @@ class RemoteProcessHandler:
         self.running = False
 
 
-def spawn_process(name: str, target=None):
+def spawn_process(name: str, target=None, async_process=False):
     handler = RemoteProcessHandler(name)
-    process = multiprocessing.Process(
-        target=handler.main if target is not None else handler.fetch
-    )
+    if async_process:
+        process = multiprocessing.Process(target=handler.async_workflow)
+    else:
+        process = multiprocessing.Process(
+            target=handler.main if target is not None else handler.fetch
+        )
 
     if target is not None:
         handler.on_process_queue.put(serialize_task(target))

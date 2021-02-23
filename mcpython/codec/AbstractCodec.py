@@ -7,4 +7,3 @@ class AbstractCodec(ABC):
 
     def encode(self, data):
         raise NotImplementedError
-

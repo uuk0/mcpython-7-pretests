@@ -57,4 +57,6 @@ Python loaded
 -
 
 Codecs for data driven system
+The following codecs are arrival:
+- Block Codec: codec for block types
 

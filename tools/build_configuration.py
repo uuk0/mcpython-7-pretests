@@ -1,8 +1,11 @@
+import sys
+
 from . import BuildPipe
 import os
 
 
 local = os.path.dirname(os.path.dirname(__file__))
+interpreter_home = os.path.dirname(sys.executable)
 
 
 DEFAULT_BUILD_INSTANCE = BuildPipe.ProjectBuildManager()
@@ -17,6 +20,7 @@ DEFAULT_BUILD_INSTANCE.add_stage(
             or ".idea" in file
             or "__pycache__" in file
             or "builds" in file
+            or "venv" in file
         )
     )
 )
@@ -57,6 +61,7 @@ DEFAULT_BUILD_INSTANCE.add_stage(
                 "--windows-company-name=mcpython",
                 "--windows-product-version=0.1.0",
                 "--plugin-enable=multiprocessing",
+                # f"--include-data-file={interpreter_home+'/DLLs/_socket.pyd'}=_socket.pyd",
             ],
             look_for_output=f"{local}/builds/nuitka_output/launch.dist/launch.exe",
         ),

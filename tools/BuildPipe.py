@@ -263,14 +263,18 @@ class PyMinifierTask(AbstractBuildStage):
         for file in view.modified_files:
             if file.endswith(".py"):
                 if file not in self.special_config:
-                    view.write(
-                        file,
-                        python_minifier.minify(
-                            view.read(file).decode("utf-8"),
-                            preserve_locals=["NAME"],
-                            remove_literal_statements=True,
-                        ).encode("utf-8"),
-                    )
+                    try:
+                        view.write(
+                            file,
+                            python_minifier.minify(
+                                view.read(file).decode("utf-8"),
+                                preserve_locals=["NAME"],
+                                remove_literal_statements=True,
+                            ).encode("utf-8"),
+                        )
+                    except:
+                        print(file)
+                        raise
                 else:
                     view.write(
                         file,

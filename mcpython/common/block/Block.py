@@ -2,7 +2,10 @@ import mcpython.common.block.BlockState
 
 
 class Block:
-    def __init__(self, destroyed_by_explosion=True, destroyed_by_player=True):
+    def __init__(
+        self, name: str, destroyed_by_explosion=True, destroyed_by_player=True
+    ):
+        self.name = name
         self.destroyed_by_explosion = destroyed_by_explosion
         self.destroyed_by_player = destroyed_by_player
 

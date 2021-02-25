@@ -34,7 +34,9 @@ class TextureBaker:
     def add_from_file(self, file: str) -> TextureReference:
         reference = TextureBaker.TextureReference()
         self.references[reference.id] = reference
-        shared.process_handler.execute_on("file_io", read_image, file=file, reference=reference)
+        shared.process_handler.execute_on(
+            "file_io", read_image, file=file, reference=reference
+        )
         self.pending_images += 1
         return reference
 

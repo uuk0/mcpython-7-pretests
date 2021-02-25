@@ -15,9 +15,6 @@ import os
 local = os.path.dirname(os.path.dirname(__file__))
 
 
-process_handler = None
-
-
 class MC:
     MC_BASE_NAME = "21w08a"
     ASSET_SOURCE_URL = "https://launcher.mojang.com/v1/objects/3a008c012bd6bba29054701c7797493523660c57/client.jar"
@@ -25,7 +22,12 @@ class MC:
 
 tmp = tempfile.TemporaryDirectory()
 
+# not-main only
+process_handler = None
+
+# file_io only
 resource_locator = None
+reload_handler = None
 
 
 def get_resource_locator():

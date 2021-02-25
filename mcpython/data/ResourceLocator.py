@@ -128,12 +128,17 @@ class ResourceLocator:
 
             # filter all non-asset sources from the file tree todo: use filter() on namelist
 
-            with zipfile.ZipFile(shared.local + "/source_tmp.zip") as f, zipfile.ZipFile(shared.local + "/source.zip", mode="w") as wf:
+            with zipfile.ZipFile(
+                shared.local + "/source_tmp.zip"
+            ) as f, zipfile.ZipFile(shared.local + "/source.zip", mode="w") as wf:
                 for file in f.namelist():
-                    if file.endswith("/"): continue
+                    if file.endswith("/"):
+                        continue
 
                     if ("assets/" in file or "data/" in file) and "net/" not in file:
-                        with f.open(file, mode="r") as f1, wf.open(file, mode="w") as f2:
+                        with f.open(file, mode="r") as f1, wf.open(
+                            file, mode="w"
+                        ) as f2:
                             f2.write(f1.read())
 
             # remove the unfiltered file

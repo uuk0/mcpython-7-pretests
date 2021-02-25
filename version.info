@@ -12,3 +12,4 @@ Started writing this test on 20.02.2021
 [uuk]: added some more io stuff
 [uuk]: TextureBaker is now capable of doing some cool, but still WIP
 [uuk]: added some dummy codec files
+[uuk]: added ReloadHandler API

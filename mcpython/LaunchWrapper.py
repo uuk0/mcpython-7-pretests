@@ -2,7 +2,7 @@ def rendering(handler):
     import pyglet
     import mcpython.rendering.Window
 
-    window = mcpython.rendering.Window.Window()
+    window = mcpython.rendering.Window.Window(handler)
     handler.window = window
 
     pyglet.clock.schedule_interval(handler.fetch, 0.3)

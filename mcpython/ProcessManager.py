@@ -1,4 +1,5 @@
 import multiprocessing
+import sys
 import threading
 import marshal
 import pickle
@@ -8,15 +9,22 @@ import typing
 
 
 def serialize_task(func, args=tuple(), kwargs=None) -> bytes:
-    return pickle.dumps((marshal.dumps(func.__code__), args, kwargs))
+    # print("serializing", repr(func))
+    return pickle.dumps((marshal.dumps(func.__code__) if isinstance(func, types.FunctionType) else func, args, kwargs, (isinstance(func, types.LambdaType) and func.__name__ == "<lambda>")))
 
 
 def deserialize_task(
     data: bytes,
 ) -> typing.Tuple[typing.Callable, typing.List, typing.Optional[typing.Dict]]:
-    code, args, kwargs = pickle.loads(data)
-    code = marshal.loads(code)
-    return types.FunctionType(code, globals()), args, kwargs
+    code, args, kwargs, is_lambda = pickle.loads(data)
+    if isinstance(code, bytes):
+        code = marshal.loads(code)
+        # print(code, args, kwargs, is_lambda)
+        if not is_lambda:
+            return types.FunctionType(code, globals()), args, kwargs
+        return types.FunctionType(code, globals(), closure=tuple()), args, kwargs
+    elif isinstance(code, str):
+        return lambda: eval(code), [], {}
 
 
 class RemoteProcessHandler:
@@ -25,6 +33,8 @@ class RemoteProcessHandler:
         self.on_process_queue = multiprocessing.Queue()
         self.other_process_queue = multiprocessing.Queue()
         self.running = True
+
+        self.window = None
 
     def main(self):
         while self.running:
@@ -38,6 +48,8 @@ class RemoteProcessHandler:
                     target[0](self, *target[1])
                 else:
                     target[0](self, *target[1], **target[2])
+            except SystemExit:
+                raise
             except:
                 print(target)
                 traceback.print_exc()
@@ -65,10 +77,12 @@ class RemoteProcessHandler:
                     await t
                 except TypeError:
                     pass
+            except SystemExit:
+                raise
 
             except:
-                print(target)
                 traceback.print_exc()
+                # todo: decide if to exit or not!
 
     def execute_on(self, process_name: str, task, *args, **kwargs):
         self.other_process_queue.put(
@@ -78,7 +92,7 @@ class RemoteProcessHandler:
             )
         )
 
-    def stop(self):
+    def stop(self, exit_code=0):
         print("stopping game from process", self.name)
         self.execute_on(
             "main",
@@ -86,10 +100,13 @@ class RemoteProcessHandler:
                 lambda handler: handler.this_stop()
             ),
         )
-        self.execute_on("main", lambda: __import__("sys").exit())
+        self.execute_on("main", lambda code: __import__("sys").exit(code), exit_code)
+        sys.exit()
 
     def this_stop(self):
+        print("stopping process", self.name)
         self.running = False
+        sys.exit()
 
 
 def spawn_process(name: str, target=None, async_process=False):
@@ -131,10 +148,13 @@ def maintain():
                     PROCESS_HANDLERS[target_process].on_process_queue.put(data)
 
         for process in PROCESSES.values():
-            if not process.is_alive():
-                break
-        else:
-            continue
+            if process.exitcode:
+                print("stopping game from main thread")
+                for name in PROCESSES:
+                    print(" - killing", name)
+                    PROCESSES[name].kill()
+
+                return
 
 
 PROCESSES: typing.Dict[str, multiprocessing.Process] = {}

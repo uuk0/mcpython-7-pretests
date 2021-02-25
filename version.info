@@ -5,3 +5,5 @@ Started writing this test on 20.02.2021
 [uuk]: implemented basic codec API
 [uuk]: implemented basic block API, with its own CODEC instance
 [uuk]: implemented window class spawned in rendering thread
+[uuk]: fixed some process manager stuff
+[uuk]: process manager accepts now code to eval() as func parameter for execute_on()

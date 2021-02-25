@@ -9,3 +9,5 @@ Started writing this test on 20.02.2021
 [uuk]: process manager accepts now code to eval() as func parameter for execute_on()
 [uuk]: added resource loader
 [uuk]: mc assets are now auto-downloaded and linked at runtime
+[uuk]: added some more io stuff
+[uuk]: TextureBaker is now capable of doing some cool stuff

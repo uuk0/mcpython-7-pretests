@@ -1,7 +1,21 @@
+"""
+Shared.py contains data shared in the same process
+local is the main path
+
+resource_locator is optional the ResourceLocator instance, use get_resource_locator() for safe access
+
+tmp is the temporary folder for this process
+
+MC contains constants around the mc version this is based on
+"""
+
 import tempfile
 import os
 
 local = os.path.dirname(os.path.dirname(__file__))
+
+
+process_handler = None
 
 
 class MC:

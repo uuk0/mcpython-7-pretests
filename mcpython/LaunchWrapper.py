@@ -1,4 +1,11 @@
 def rendering(handler):
+    """
+    Main loop for rendering system
+    Hands the fetch() call over to the pyglet clock, ticking each 1/20s
+
+    todo: setup OpenGL
+    todo: setup rendering Pipe
+    """
     import pyglet
     import mcpython.rendering.Window
 
@@ -12,6 +19,8 @@ def rendering(handler):
 
 
 class LaunchWrapper:
+    # todo: share this when there is more config here...
+
     def __init__(self):
         pass
 
@@ -28,7 +37,8 @@ class LaunchWrapper:
 
         """
         How split on processes?
-        - file_io: process for accessing data and handling it
+        - file_io: process for accessing data and handling it, only process for accessing ResourceLocator
+            todo: reload system goes here
         - rendering is driven by pyglet main thread and fetches events from pyglet, and requests for changing
             whats rendered, calculating stuff off-thread and re-injecting it into the default task pipe if needed
         - world_handling stores the whole world, for every dimension having its own thread (as long as there are
@@ -42,6 +52,7 @@ class LaunchWrapper:
             may use also async for handling and waiting for stuff
         """
 
+        # Setup resource system
         mcpython.ProcessManager.execute_on(
             "file_io",
             """
@@ -53,11 +64,6 @@ handler.set_flag('resource_locator:load_complete')""",
 
     def launch(self):
         import mcpython.ProcessManager
-
-        # This are tests for testing cross-process task sending
-        # mcpython.ProcessManager.execute_on("rendering", lambda handler: print("Hello World!"))
-        # mcpython.ProcessManager.execute_on("world_handling", lambda handler: handler.execute_on("main", lambda: print("Back!")))
-        # mcpython.ProcessManager.execute_on("world_handling", lambda handler: handler.execute_on("network", lambda h: print("Cross!")))
 
         mcpython.ProcessManager.start_processes()
         mcpython.ProcessManager.maintain()

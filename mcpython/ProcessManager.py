@@ -7,6 +7,10 @@ import traceback
 import types
 import typing
 
+from mcpython import shared
+
+CURRENT_HANDLER: typing.Optional["RemoteProcessHandler"] = None
+
 
 def serialize_task(
     func: typing.Union[str, typing.Callable], args=tuple(), kwargs=None
@@ -60,6 +64,10 @@ class RemoteProcessHandler:
         self.window = None
 
     def main(self):
+        global CURRENT_HANDLER
+        CURRENT_HANDLER = self
+        shared.process_handler = self
+
         while self.running:
             self.fetch()
 
@@ -78,6 +86,10 @@ class RemoteProcessHandler:
                 traceback.print_exc()
 
     def async_workflow(self):
+        global CURRENT_HANDLER
+        CURRENT_HANDLER = self
+        shared.process_handler = self
+
         import asyncio
 
         asyncio.run(self.async_main())

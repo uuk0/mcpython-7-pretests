@@ -1,3 +1,6 @@
+import time
+
+
 def rendering(handler):
     """
     Main loop for rendering system

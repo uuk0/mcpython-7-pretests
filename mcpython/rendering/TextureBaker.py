@@ -29,6 +29,7 @@ class TextureBaker:
     def __init__(self):
         self.references = {}
         self.pending_images = 0
+        self.pending_textures = set()
 
     def add_from_file(self, file: str) -> TextureReference:
         reference = TextureBaker.TextureReference()
@@ -44,8 +45,7 @@ class TextureBaker:
         else:
             reference = self.references[reference.id]
         reference.baker = self
-
-        # todo: add image to internal list
+        self.pending_textures.add((reference.id, texture))
 
         self.pending_images -= 1
         return reference
@@ -53,6 +53,11 @@ class TextureBaker:
     def bake(self):
         if self.pending_images:
             raise RuntimeError("bake called before results are in!")
+
+        while len(self.pending_textures) > 0:
+            ref_id, texture = self.pending_textures.pop()
+
+            # todo: work here...
 
 
 BAKER = TextureBaker()

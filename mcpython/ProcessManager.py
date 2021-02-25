@@ -134,7 +134,7 @@ class RemoteProcessHandler:
         )
 
     def stop(self, exit_code=0):
-        print("stopping game from process", self.name)
+        print("stopping game from process", self.name, "with exit code", exit_code)
         self.execute_on(
             "main",
             lambda: __import__("mcpython.ProcessManager").ProcessManager.execute_on_all(
@@ -145,6 +145,11 @@ class RemoteProcessHandler:
         sys.exit()
 
     def this_stop(self):
+        """
+        Internal use only
+        Used to stop THIS process, not the other ones
+        Use stop() for stopping all (including this)
+        """
         print("stopping process", self.name)
         self.running = False
         sys.exit()

@@ -7,3 +7,5 @@ Started writing this test on 20.02.2021
 [uuk]: implemented window class spawned in rendering thread
 [uuk]: fixed some process manager stuff
 [uuk]: process manager accepts now code to eval() as func parameter for execute_on()
+[uuk]: added resource loader
+[uuk]: mc assets are now auto-downloaded and linked at runtime

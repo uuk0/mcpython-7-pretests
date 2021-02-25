@@ -8,9 +8,20 @@ import types
 import typing
 
 
-def serialize_task(func, args=tuple(), kwargs=None) -> bytes:
+def serialize_task(
+    func: typing.Union[str, typing.Callable], args=tuple(), kwargs=None
+) -> bytes:
     # print("serializing", repr(func))
-    return pickle.dumps((marshal.dumps(func.__code__) if isinstance(func, types.FunctionType) else func, args, kwargs, (isinstance(func, types.LambdaType) and func.__name__ == "<lambda>")))
+    return pickle.dumps(
+        (
+            marshal.dumps(func.__code__)
+            if isinstance(func, types.FunctionType)
+            else func,
+            args,
+            kwargs,
+            (isinstance(func, types.LambdaType) and func.__name__ == "<lambda>"),
+        )
+    )
 
 
 def deserialize_task(
@@ -24,7 +35,19 @@ def deserialize_task(
             return types.FunctionType(code, globals()), args, kwargs
         return types.FunctionType(code, globals(), closure=tuple()), args, kwargs
     elif isinstance(code, str):
-        return lambda: eval(code), [], {}
+        return (
+            lambda handler: exec(
+                code,
+                globals(),
+                (
+                    {"handler": handler} | kwargs
+                    if kwargs is not None
+                    else {"handler": handler}
+                ),
+            ),
+            [],
+            {},
+        )
 
 
 class RemoteProcessHandler:
@@ -84,7 +107,13 @@ class RemoteProcessHandler:
                 traceback.print_exc()
                 # todo: decide if to exit or not!
 
-    def execute_on(self, process_name: str, task, *args, **kwargs):
+    def execute_on(
+        self,
+        process_name: str,
+        task: typing.Union[typing.Callable, str],
+        *args,
+        **kwargs
+    ):
         self.other_process_queue.put(
             (
                 process_name,
@@ -108,6 +137,16 @@ class RemoteProcessHandler:
         self.running = False
         sys.exit()
 
+    def set_flag(self, name: str):
+        print("setting flag", name)
+        FLAGS[name] = True
+
+    def unset_flag(self, name: str):
+        FLAGS[name] = False
+
+    def has_flag(self, name: str) -> bool:
+        return FLAGS.setdefault(name, False)
+
 
 def spawn_process(name: str, target=None, async_process=False):
     handler = RemoteProcessHandler(name)
@@ -117,6 +156,15 @@ def spawn_process(name: str, target=None, async_process=False):
         process = multiprocessing.Process(
             target=handler.main if target is not None else handler.fetch
         )
+
+    handler.on_process_queue.put(
+        serialize_task(
+            """
+import mcpython.ProcessManager
+mcpython.ProcessManager.FLAGS = flags""",
+            kwargs={"flags": FLAGS},
+        )
+    )
 
     if target is not None:
         handler.on_process_queue.put(serialize_task(target))
@@ -159,6 +207,14 @@ def maintain():
 
 PROCESSES: typing.Dict[str, multiprocessing.Process] = {}
 PROCESS_HANDLERS: typing.Dict[str, RemoteProcessHandler] = {}
+MANAGER = None
+FLAGS: typing.Optional[dict] = None
+
+
+def setup_dict():
+    global MANAGER, FLAGS
+    MANAGER = multiprocessing.Manager()
+    FLAGS = MANAGER.dict()
 
 
 # Only for main process work

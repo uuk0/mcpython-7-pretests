@@ -18,6 +18,9 @@ class LaunchWrapper:
     def setup(self):
         import mcpython.ProcessManager
 
+        mcpython.ProcessManager.setup_dict()
+
+        mcpython.ProcessManager.spawn_process("file_io")
         mcpython.ProcessManager.spawn_process("rendering", target=rendering)
         mcpython.ProcessManager.spawn_process("world_handling")
         mcpython.ProcessManager.spawn_process("world_generation", async_process=True)
@@ -25,6 +28,7 @@ class LaunchWrapper:
 
         """
         How split on processes?
+        - file_io: process for accessing data and handling it
         - rendering is driven by pyglet main thread and fetches events from pyglet, and requests for changing
             whats rendered, calculating stuff off-thread and re-injecting it into the default task pipe if needed
         - world_handling stores the whole world, for every dimension having its own thread (as long as there are
@@ -37,6 +41,15 @@ class LaunchWrapper:
         - network is network handling, nothing more to say. Is allowed to send requests to other processes,
             may use also async for handling and waiting for stuff
         """
+
+        mcpython.ProcessManager.execute_on(
+            "file_io",
+            """
+import mcpython.data.ResourceLocator
+import mcpython.shared
+mcpython.shared.get_resource_locator().load_default_resources()
+handler.set_flag('resource_locator:load_complete')""",
+        )
 
     def launch(self):
         import mcpython.ProcessManager

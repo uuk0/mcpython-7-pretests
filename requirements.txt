@@ -1,2 +1,4 @@
 simplejson==3.17.2
 pyglet==1.5.15
+pillow==8.1.0
+requests==2.25.1

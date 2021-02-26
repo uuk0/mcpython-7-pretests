@@ -2,6 +2,11 @@ import mcpython.common.block.BlockState
 
 
 class Block:
+    """
+    Block Class
+    Every instance represents a block "type"
+    """
+
     def __init__(
         self, name: str, destroyed_by_explosion=True, destroyed_by_player=True
     ):

@@ -60,3 +60,16 @@ Codecs for data driven system
 The following codecs are arrival:
 - Block Codec: codec for block types
 
+
+Storage Design:
+- registry tables:
+  - blocks used in palettes for referencing block names, so there is only an ID, linking here
+- Chunk:
+  - a map chunk relative pos -> chunk data:
+    - shared_palette: a palette of size u2 with ref size ceil(log2(size)), maybe add global palette and special ref from here?
+    - sectors: a list of the following structures:
+      - u2 cy: the y//16 coord this section starts 
+      - u2 palette size followed by palette entries 
+      - the world, as an array of 16\*16\*16 entries, starting with 0 for local and 1 for shared, followed by needed
+        bits for reference
+

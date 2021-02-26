@@ -52,7 +52,11 @@ class Codec(AbstractCodec):
         validator: typing.Callable[[typing.Any], bool] = None,
     ):
         self.arguments[0].append(
-            (CodecArgSource.from_any(source), converter, validator)
+            (
+                CodecArgSource.from_any(source),
+                converter,
+                validator,
+            )
         )
         return self
 
@@ -76,11 +80,15 @@ class Codec(AbstractCodec):
         attr_name: str,
         converter: typing.Callable = None,
         validator: typing.Callable[[typing.Any], bool] = None,
+        on_serialize=True,
+        on_deserialize=True,
     ):
         self.attributes[attr_name] = (
             CodecArgSource.from_any(source),
             converter,
             validator,
+            on_serialize,
+            on_deserialize,
         )
         return self
 

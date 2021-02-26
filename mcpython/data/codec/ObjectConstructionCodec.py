@@ -82,6 +82,7 @@ class Codec(AbstractCodec):
         validator: typing.Callable[[typing.Any], bool] = None,
         on_serialize=True,
         on_deserialize=True,
+        serialize_only_if: typing.Callable[[typing.Any], bool] = None,
     ):
         self.attributes[attr_name] = (
             CodecArgSource.from_any(source),
@@ -89,6 +90,7 @@ class Codec(AbstractCodec):
             validator,
             on_serialize,
             on_deserialize,
+            serialize_only_if,
         )
         return self
 

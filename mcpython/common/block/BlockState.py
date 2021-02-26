@@ -32,3 +32,9 @@ class BlockState:
             and self.block_state == other.block_state
             and self.nbt == other.nbt
         )
+
+    def set_state(self, state: dict):
+        previous = self.block_state
+        self.block_state = state
+        self.block_class.on_state_change(self, previous, state)
+        self.mark_dirty()

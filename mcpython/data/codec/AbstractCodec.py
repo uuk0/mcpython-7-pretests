@@ -1,3 +1,4 @@
+import typing
 from abc import ABC
 
 
@@ -7,3 +8,7 @@ class AbstractCodec(ABC):
 
     def encode(self, data):
         raise NotImplementedError
+
+
+class AbstractEncodeAble(ABC):
+    CODEC: typing.Optional[AbstractCodec] = None

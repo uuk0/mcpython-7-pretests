@@ -70,3 +70,8 @@ handler.set_flag('resource_locator:load_complete')""",
 
         mcpython.ProcessManager.start_processes()
         mcpython.ProcessManager.maintain()
+
+    def run_data_gen(self):
+        import mcpython.data.gen.Driver
+
+        mcpython.data.gen.Driver.work_vanilla()

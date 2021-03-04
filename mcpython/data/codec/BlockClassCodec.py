@@ -26,7 +26,7 @@ BLOCK_CODEC = (
         "default_model_state",
         validator=lambda value: isinstance(value, dict),
     )
-    .register_attribute_setter("name", on_deserialize=False)
+    .register_attribute_setter(("name",), "name", on_deserialize=False)
     # And now, the serializers for above...
     .register_attribute_setter(
         ("properties", "destroyed_by_explosion"),

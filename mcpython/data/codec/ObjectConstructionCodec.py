@@ -1,7 +1,7 @@
 import typing
 import json
 
-from mcpython.codec.AbstractCodec import AbstractCodec
+from mcpython.data.codec.AbstractCodec import AbstractCodec
 
 
 class CodecArgSource:

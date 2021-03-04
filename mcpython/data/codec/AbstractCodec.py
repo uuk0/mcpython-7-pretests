@@ -9,6 +9,11 @@ class AbstractCodec(ABC):
     def encode(self, data):
         raise NotImplementedError
 
+    def get_default_file_target(self, data) -> typing.Optional[str]:
+        return
+
 
 class AbstractEncodeAble(ABC):
-    CODEC: typing.Optional[AbstractCodec] = None
+    @classmethod
+    def get_codec(cls) -> typing.Optional[AbstractCodec]:
+        pass

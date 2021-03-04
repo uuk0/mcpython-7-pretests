@@ -1,3 +1,4 @@
+import os
 import typing
 
 import mcpython.data.codec.AbstractCodec
@@ -24,6 +25,15 @@ class DataGenerationDriver:
 
             data = codec.encode(target)
             file = codec.get_default_file_target(target)
+
+            if file is None:
+                print("skipping dump to file system")
+                continue
+
+            d = os.path.dirname(file)
+
+            if not os.path.isdir(d):
+                os.makedirs(d)
 
             with open(file, mode="wb") as f:
                 f.write(data)

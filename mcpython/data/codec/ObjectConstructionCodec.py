@@ -1,5 +1,5 @@
 import typing
-import json
+import simplejson
 
 from mcpython.data.codec.AbstractCodec import AbstractCodec
 
@@ -10,11 +10,20 @@ class CodecArgSource:
         if isinstance(source, CodecArgSource):
             return source
 
-    def __init__(self):
-        pass
+        if isinstance(source, str):
+            return cls().add_dict_entry_get(source)
 
-    def add_dict_entry_get(self, key: str, optional):
-        pass
+        if isinstance(source, (tuple, list)):
+            return cls().add_dict_entry_get(*source)
+
+        raise NotImplementedError(source)
+
+    def __init__(self):
+        self.tree = []
+
+    def add_dict_entry_get(self, *keys: str) -> "CodecArgSource":
+        self.tree += keys
+        return self
 
     def add_codec_list(self, codec: AbstractCodec):
         pass
@@ -25,10 +34,16 @@ class CodecArgSource:
         pass
 
     def decode_from(self, data_tree: dict):
-        pass
+        for key in self.tree:
+            data_tree = data_tree[key]
+
+        return data_tree
 
     def encode_into(self, entry, data_tree: dict):
-        pass
+        for key in self.tree[:-1]:
+            data_tree = data_tree[key]
+
+        data_tree[self.tree[-1]] = entry
 
 
 class Codec(AbstractCodec):
@@ -36,11 +51,16 @@ class Codec(AbstractCodec):
         self,
         obj_creator: typing.Callable,
         obj_handler: typing.Callable = None,
-        base_decoder=lambda data: json.loads(data.decode("utf-8")),
+        base_decoder=lambda data: simplejson.loads(data.decode("utf-8")),
+        base_encoder=lambda data: simplejson.dumps(data, indent="  ").encode("utf-8"),
+        file_target_formatting: typing.Callable[[typing.Any], str] = None,
     ):
         self.obj_creator = obj_creator
         self.obj_handler = obj_handler
         self.base_decoder = base_decoder
+        self.base_encode = base_encoder
+
+        self.file_target_formatting = file_target_formatting
 
         self.arguments = [], {}
         self.attributes = {}
@@ -78,7 +98,8 @@ class Codec(AbstractCodec):
         self,
         source,
         attr_name: str,
-        converter: typing.Callable = None,
+        converter_from_data: typing.Callable = None,
+        converter_from_obj: typing.Callable = None,
         validator: typing.Callable[[typing.Any], bool] = None,
         on_serialize=True,
         on_deserialize=True,
@@ -86,7 +107,8 @@ class Codec(AbstractCodec):
     ):
         self.attributes[attr_name] = (
             CodecArgSource.from_any(source),
-            converter,
+            converter_from_data,
+            converter_from_obj,
             validator,
             on_serialize,
             on_deserialize,
@@ -99,10 +121,82 @@ class Codec(AbstractCodec):
             data = self.base_decoder(data)
 
         args = []
-        for source, converter in self.arguments[0]:
+        for source, converter, validator in self.arguments[0]:
             d = source.decode_from(data)
 
             if d is not None:
                 if converter is not None:
                     d = converter(d)
+
+                assert validator(d)
+
                 args.append(d)
+
+        kwargs = {}
+        for name, (source, converter, validator) in self.arguments[1].items():
+            d = source.decode_from(data)
+            if d is None:
+                continue
+
+            d = converter(d)
+            assert validator(d)
+            kwargs[name] = d
+
+        obj = self.obj_creator(*args, **kwargs)
+
+        for name, (
+            source,
+            converter,
+            _,
+            validator,
+            __,
+            on_deserialize,
+            ___,
+        ) in self.attributes.items():
+            if not on_deserialize:
+                continue
+
+            d = source.decode_from(data)
+            if d is None:
+                continue
+
+            d = converter(d)
+            assert validator(d)
+
+            setattr(obj, name, d)
+
+        if self.obj_handler:
+            self.obj_handler(obj)
+
+        return obj
+
+    def encode(self, obj):
+        data = {}
+        for name, (
+            source,
+            _,
+            converter,
+            validator,
+            on_serialize,
+            __,
+            serialize_if,
+        ) in self.attributes.items():
+            if not hasattr(obj, name) or not on_serialize:
+                continue
+            d = getattr(obj, name)
+
+            if callable(serialize_if) and not serialize_if(d):
+                continue
+
+            if callable(converter):
+                d = converter(d)
+
+            if callable(validator):
+                assert validator(d)
+
+            source.encode_into(d, data)
+
+        return self.base_encode(data)
+
+    def get_default_file_target(self, obj):
+        return None if self.file_target_formatting is None else self.file_target_formatting(obj)

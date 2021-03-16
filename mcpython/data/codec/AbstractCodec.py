@@ -6,7 +6,7 @@ class AbstractCodec(ABC):
     def decode(self, data):
         raise NotImplementedError
 
-    def encode(self, data):
+    def encode(self, data, plugins=None):
         raise NotImplementedError
 
     def get_default_file_target(self, data) -> typing.Optional[str]:

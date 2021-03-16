@@ -1,3 +1,4 @@
+import traceback
 import typing
 import simplejson
 
@@ -41,7 +42,7 @@ class CodecArgSource:
 
     def encode_into(self, entry, data_tree: dict):
         for key in self.tree[:-1]:
-            data_tree = data_tree[key]
+            data_tree = data_tree.setdefault(key, {})
 
         data_tree[self.tree[-1]] = entry
 
@@ -52,7 +53,8 @@ class Codec(AbstractCodec):
         obj_creator: typing.Callable,
         obj_handler: typing.Callable = None,
         base_decoder=lambda data: simplejson.loads(data.decode("utf-8")),
-        base_encoder=lambda data: simplejson.dumps(data, indent="  ").encode("utf-8"),
+        # Default json encoder; good look and sorted keys for same order across builds
+        base_encoder=lambda data: simplejson.dumps(data, indent="  ", sort_keys=True).encode("utf-8"),
         file_target_formatting: typing.Callable[[typing.Any], str] = None,
     ):
         self.obj_creator = obj_creator
@@ -170,8 +172,8 @@ class Codec(AbstractCodec):
 
         return obj
 
-    def encode(self, obj):
-        data = {}
+    def encode(self, obj, plugins=None):
+        data = {"plugins": plugins} if plugins is not None else {}
         for name, (
             source,
             _,

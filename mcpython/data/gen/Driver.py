@@ -7,23 +7,23 @@ import mcpython.data.codec.AbstractCodec
 class DataGenerationDriver:
     def __init__(self):
         self.targets: typing.List[
-            mcpython.data.codec.AbstractCodec.AbstractEncodeAble
+            typing.Tuple[mcpython.data.codec.AbstractCodec.AbstractEncodeAble, typing.Optional[list]]
         ] = []
 
-    def add_target(self, obj: mcpython.data.codec.AbstractCodec.AbstractEncodeAble):
-        self.targets.append(obj)
+    def add_target(self, obj: mcpython.data.codec.AbstractCodec.AbstractEncodeAble, plugins=None):
+        self.targets.append((obj, plugins))
         return self
 
     def work(self):
-        for target in self.targets:
+        for target, plugins in self.targets:
             # todo: do work
             print("running data generation entry for", target)
             codec = target.get_codec()
             if codec is None:
-                print("NO CODEC FOUND!")
+                print("NO CODEC FOUND, SKIPPING!")
                 continue
 
-            data = codec.encode(target)
+            data = codec.encode(target, plugins=plugins)
             file = codec.get_default_file_target(target)
 
             if file is None:

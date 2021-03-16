@@ -131,4 +131,7 @@ dmypy.json
 # build folder
 builds/
 
+asssets/
+data/
+
 source.zip

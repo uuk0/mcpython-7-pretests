@@ -54,4 +54,90 @@ BLOCK_CODEC = (
         "name",
         on_deserialize=False,
     )
+    # And now, both directional stuff
+    .register_attribute_setter(
+        ("properties", "material"),
+        "material",
+        serialize_only_if=lambda value: value is not None
+    )
+    .register_attribute_setter(
+        ("properties", "map_color"),
+        "map_color",
+        serialize_only_if=lambda value: value is not None
+    )
+    .register_attribute_setter(
+        ("properties", "requires_tool"),
+        "requires_tool",
+        serialize_only_if=lambda value: value
+    )
+    .register_attribute_setter(
+        ("properties", "hardness"),
+        "hardness",
+        serialize_only_if=lambda value: value != 0
+    )
+    .register_attribute_setter(
+        ("properties", "blast_resistance"),
+        "blast_resistance",
+        serialize_only_if=lambda value: value != 0
+    )
+    .register_attribute_setter(
+        ("properties", "ticks_randomly"),
+        "ticks_randomly",
+        serialize_only_if=lambda value: value
+    )
+    .register_attribute_setter(
+        ("properties", "sound_group"),
+        "sound_group",
+        serialize_only_if=lambda value: value is not None
+    )
+    .register_attribute_setter(
+        ("properties", "has_collision"),
+        "has_collision",
+        serialize_only_if=lambda value: not value
+    )
+    .register_attribute_setter(
+        ("properties", "breaks_instantly"),
+        "breaks_instantly",
+        serialize_only_if=lambda value: value
+    )
+    .register_attribute_setter(
+        ("properties", "drops_nothing"),
+        "drops_nothing",
+        serialize_only_if=lambda value: value
+    )
+    .register_attribute_setter(
+        ("properties", "opaque"),
+        "opaque",
+        serialize_only_if=lambda v: not v
+    )
+    .register_attribute_setter(
+        ("properties", "solid"),
+        "solid",
+        serialize_only_if=lambda v: not v
+    )
+    .register_attribute_setter(
+        ("properties", "allow_spawns"),
+        "allow_spawns",
+        serialize_only_if=lambda v: not v
+    )
+    .register_attribute_setter(
+        ("properties", "do_suffocation"),
+        "do_suffocation",
+        serialize_only_if=lambda v: not v
+    )
+    .register_attribute_setter(
+        ("properties", "blocks_vision"),
+        "blocks_vision",
+        serialize_only_if=lambda v: not v
+    )
+    .register_attribute_setter(
+        ("properties", "dynamic_bounds"),
+        "dynamic_bounds",
+        serialize_only_if=lambda v: v
+    )
+    .register_attribute_setter(
+        ("properties", "drops_like"),
+        "drops_like",
+        serialize_only_if=lambda v: v is not None
+    )
 )

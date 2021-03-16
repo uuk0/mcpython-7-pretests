@@ -63,7 +63,9 @@ class Block(mcpython.data.codec.AbstractCodec.AbstractEncodeAble):
 
     def strength(self, hardness: float, blast_resistance=None):
         self.hardness = hardness
-        self.blast_resistance = blast_resistance if blast_resistance is not None else hardness
+        self.blast_resistance = (
+            blast_resistance if blast_resistance is not None else hardness
+        )
         return self
 
     def ticksRandomly(self):
@@ -128,7 +130,9 @@ class Block(mcpython.data.codec.AbstractCodec.AbstractEncodeAble):
     ) -> bool:
         return self.destroyed_by_explosion
 
-    def can_be_destroyed_by_player(self, state: BlockState, player, hand, held_itemstack) -> bool:
+    def can_be_destroyed_by_player(
+        self, state: BlockState, player, hand, held_itemstack
+    ) -> bool:
         return self.destroyed_by_player
 
     def on_state_change(

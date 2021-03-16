@@ -12,6 +12,8 @@ def rendering(handler):
     import pyglet
     import mcpython.rendering.Window
 
+    import mcpython.rendering.block.BlockRenderingManager
+
     window = mcpython.rendering.Window.Window(handler)
     handler.window = window
 
@@ -63,6 +65,14 @@ import mcpython.data.ResourceLocator
 import mcpython.shared
 mcpython.shared.get_resource_locator().load_default_resources()
 handler.set_flag('resource_locator:load_complete')""",
+        )
+        mcpython.ProcessManager.execute_on(
+            "world_handling",
+            """
+import mcpython.common.world.World
+import mcpython.shared
+mcpython.shared.world = mcpython.common.world.World.World()
+""",
         )
 
     def launch(self):

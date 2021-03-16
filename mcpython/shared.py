@@ -29,6 +29,9 @@ process_handler = None
 resource_locator = None
 reload_handler = None
 
+# World handling only
+world = None
+
 
 def get_resource_locator():
     if resource_locator is None:

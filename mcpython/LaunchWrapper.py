@@ -13,12 +13,17 @@ def rendering(handler):
     import mcpython.rendering.Window
 
     import mcpython.rendering.block.BlockRenderingManager
+    import mcpython.common.event.Events
 
     window = mcpython.rendering.Window.Window(handler)
     handler.window = window
 
+    mcpython.common.event.Events.WINDOW_CREATION.call(window)
+
     pyglet.clock.schedule_interval(handler.fetch, 0.3)
     pyglet.app.run()
+
+    mcpython.common.event.Events.EXIT.call()
 
     handler.stop()
 
@@ -74,6 +79,10 @@ import mcpython.shared
 mcpython.shared.world = mcpython.common.world.World.World()
 """,
         )
+
+        import mcpython.common.event.Events
+
+        mcpython.common.event.Events.INIT.call()
 
     def launch(self):
         import mcpython.ProcessManager

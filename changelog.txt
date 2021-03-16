@@ -2,4 +2,15 @@
 
 changelog of <unknown> developed from 20.2.2021 until <unknown> released on <unknown> [build 1 - <...>]
     The basic stuff, foundation work
+    A lot of API work
+    Everything WIP
+    see version.info for detail changes
+
+
+Future stuff:
+    - event handling system, with fast calls and skips for no events [EventDispatcherInstance calling, EventSubscriber receiving?]
+    - a chat system with command integration
+    - a save game system [API at world side finished] with a data fixer API
+    - entity system with rendering [API at world side WIP]
+
 

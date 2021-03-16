@@ -1,4 +1,5 @@
 import typing
+import mcpython.common.world.Chunk
 
 
 class Dimension:
@@ -13,7 +14,9 @@ class Dimension:
         self.internal_id: typing.Optional[int] = None
 
         # A dict chunk pos -> Chunk, holding all loaded chunks
-        self.chunks = {}
+        self.chunks: typing.Dict[
+            typing.Tuple[int, int], mcpython.common.world.Chunk.Chunk
+        ] = {}
 
         # The player list for this dimension
         self.players = {}
@@ -23,8 +26,23 @@ class Dimension:
 
     def get_chunk(
         self, position: typing.Tuple[int, int], load_from_files=True, generate=False
-    ):
-        raise NotImplementedError
+    ) -> typing.Optional[mcpython.common.world.Chunk.Chunk]:
+
+        if position not in self.chunks:
+            if not load_from_files and not generate:
+                return
+
+            chunk = mcpython.common.world.Chunk.Chunk()
+            chunk.position = position
+            chunk.dimension = self
+            if load_from_files:
+                chunk.load_from_saves()
+            if generate:
+                chunk.generate()
+
+            return self.chunks.setdefault(position, chunk)
+
+        return self.chunks[position]
 
     def get_chunk_for_position(
         self,
@@ -39,7 +57,7 @@ class Dimension:
         )
 
     def get_player(self, name: str, spawn_if_not_in_world=False):
-        raise NotImplementedError
+        return self.players[name]
 
     def save(self):
         """

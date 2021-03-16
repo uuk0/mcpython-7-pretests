@@ -48,22 +48,22 @@ DEFAULT_BUILD_INSTANCE.add_stage(
         BuildPipe.DumpTask("end_user.zip", as_zip=True),
         # Stand-alone build execute-able, uses current OS as target
         # todo: only in git actions
-        BuildPipe.NuitkaBuild(
-            [
-                # "--standalone",
-                "--assume-yes-for-downloads",
-                "--include-package=pyglet",
-                f"--output-dir={local}/builds/nuitka_output",
-                #  "--lto",
-                "--show-modules",
-                "--onefile",
-                "--windows-product-name=mcpython",
-                "--windows-company-name=mcpython",
-                "--windows-product-version=0.1.0",
-                "--plugin-enable=multiprocessing",
-                # f"--include-data-file={interpreter_home+'/DLLs/_socket.pyd'}=_socket.pyd",
-            ],
-            look_for_output=f"{local}/builds/nuitka_output/launch.dist/launch.exe",
-        ),
+        # BuildPipe.NuitkaBuild(
+        #     [
+        #         # "--standalone",
+        #         "--assume-yes-for-downloads",
+        #         "--include-package=pyglet",
+        #         f"--output-dir={local}/builds/nuitka_output",
+        #         #  "--lto",
+        #         "--show-modules",
+        #         "--onefile",
+        #         "--windows-product-name=mcpython",
+        #         "--windows-company-name=mcpython",
+        #         "--windows-product-version=0.1.0",
+        #         "--plugin-enable=multiprocessing",
+        #         # f"--include-data-file={interpreter_home+'/DLLs/_socket.pyd'}=_socket.pyd",
+        #     ],
+        #     look_for_output=f"{local}/builds/nuitka_output/launch.dist/launch.exe",
+        # ),
     )
 )

@@ -32,6 +32,9 @@ reload_handler = None
 # World handling only
 world = None
 
+block_registry = None
+block_plugin_registry = None
+
 
 def get_resource_locator():
     if resource_locator is None:

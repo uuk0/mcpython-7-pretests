@@ -3,7 +3,7 @@ class BlockState:
         self.position = None
         self.dimension = None
         self.block_class = None
-        self.block_state = {}  # todo: something else? frozen dict?
+        self.state = {}  # todo: something else? frozen dict?
         self.nbt = {}
 
         # Marks the block state "dirty", meaning it must be saved
@@ -29,12 +29,12 @@ class BlockState:
     def equal_type(self, other: "BlockState"):
         return (
             self.block_class == other.block_class
-            and self.block_state == other.block_state
+            and self.state == other.state
             and self.nbt == other.nbt
         )
 
     def set_state(self, state: dict):
-        previous = self.block_state
-        self.block_state = state
+        previous = self.state
+        self.state = state
         self.block_class.on_state_change(self, previous, state)
         self.mark_dirty()

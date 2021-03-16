@@ -18,3 +18,4 @@ Started writing this test on 20.02.2021
 [uuk]: data gen system is now better working
 [uuk]: started writing some plugin system for data-driven extension
 [uuk]: some more API work
+[uuk]: removed nuitka build output until a final solution is found

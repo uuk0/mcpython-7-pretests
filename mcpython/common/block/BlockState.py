@@ -1,10 +1,18 @@
 class BlockState:
+    """
+    Class representing a block in the world.
+    BlockState for historical reasons, it itself holds a state of the block (their the name from),
+    but holds a lot more stuff internally
+
+    todo: wrap the Block functions here without the state which is auto-passed
+    """
+
     def __init__(self):
         self.position = None
         self.dimension = None
         self.block_class = None
-        self.state = {}  # todo: something else? frozen dict?
-        self.nbt = {}
+        self.state = {}  # todo: something better
+        self.nbt = {}  # todo: something better, maybe dynamically created?
 
         # Marks the block state "dirty", meaning it must be saved
         self.dirty = False

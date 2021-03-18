@@ -1,5 +1,7 @@
 import mcpython.data.codec.ObjectConstructionCodec
 import mcpython.common.block.Block
+import mcpython.common.block.BlockRegistry as _
+from mcpython import shared
 
 
 """
@@ -11,7 +13,8 @@ This is the first codec implemented, it might be completely broken...
 BLOCK_CODEC = (
     mcpython.data.codec.ObjectConstructionCodec.Codec(
         mcpython.common.block.Block.Block,
-        file_target_formatting=lambda obj: "data/{}/registry/block/{}.json".format(*obj.name.split(":"))
+        file_target_formatting=lambda obj: "data/{}/registry/block/{}.json".format(*obj.name.split(":")),
+        obj_handler=shared.block_registry.register,
     )
     .register_list_argument("name", validator=lambda value: isinstance(value, str))
     .register_keyword_argument(

@@ -6,8 +6,10 @@ def rendering(handler):
     Main loop for rendering system
     Hands the fetch() call over to the pyglet clock, ticking each 1/20s
 
+    todo: move to rendering package
     todo: setup OpenGL
     todo: setup rendering Pipe
+    todo: add custom clock
     """
     import pyglet
     import mcpython.rendering.Window
@@ -71,6 +73,7 @@ import mcpython.shared
 mcpython.shared.get_resource_locator().load_default_resources()
 handler.set_flag('resource_locator:load_complete')""",
         )
+        # Set up the world
         mcpython.ProcessManager.execute_on(
             "world_handling",
             """

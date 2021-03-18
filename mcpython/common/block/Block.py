@@ -1,8 +1,9 @@
 from mcpython.common.block import BlockState
 import mcpython.data.codec.AbstractCodec
+import mcpython.common.event.Registry
 
 
-class Block(mcpython.data.codec.AbstractCodec.AbstractEncodeAble):
+class Block(mcpython.data.codec.AbstractCodec.AbstractEncodeAble, mcpython.common.event.Registry.IRegistryContent):
     """
     Block Class
     Every instance represents a block "type"

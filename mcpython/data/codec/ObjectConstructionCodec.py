@@ -57,6 +57,14 @@ class Codec(AbstractCodec):
         base_encoder=lambda data: simplejson.dumps(data, indent="  ", sort_keys=True).encode("utf-8"),
         file_target_formatting: typing.Callable[[typing.Any], str] = None,
     ):
+        """
+        Creates a new codec instance
+        :param obj_creator: A callable where serialized data can be decoded into
+        :param obj_handler: A callable called with the encoded object
+        :param base_decoder: handles the raw data and converts it into something readable, defaults to json
+        :param base_encoder: the other way round of base_decoder, uses json per default, with good formatting
+        :param file_target_formatting: A callable formatting a object name into a file path
+        """
         self.obj_creator = obj_creator
         self.obj_handler = obj_handler
         self.base_decoder = base_decoder

@@ -21,13 +21,29 @@ class EventDispatcher:
         self.subscribers: typing.List["EventAnnotator"] = []
 
     def call(self, *args, **kwargs):
-        pass
+        """
+        Calls the event over all subscribed annotators
+        """
+        for sub in self.subscribers:
+            sub.invoke(*args, **kwargs)
 
     def call_yield_results(self, *args, **kwargs):
-        pass
+        """
+        Same as call, but will yield all results of function calls
+        """
+        for sub in self.subscribers:
+            yield sub.invoke(*args, **kwargs)
 
-    def call_cancelable(self, *args, **kwargs):
-        pass
+    def call_cancelable(self, *args, **kwargs) -> bool:
+        """
+        Same as call, but when a function returns bool(...)->True, it will exit and return the value, otherwise False
+        """
+        for sub in self.subscribers:
+            canceled = sub.invoke(*args, **kwargs)
+            if canceled:
+                return canceled
+
+        return False
 
 
 class EventAnnotator:
@@ -47,3 +63,6 @@ class EventAnnotator:
     def __call__(self, func):
         self.target = func
         return func
+
+    def invoke(self, *args, **kwargs) -> typing.Optional[typing.Any]:
+        pass

@@ -1,4 +1,5 @@
 import pyglet
+from mcpython import shared
 
 
 class Window(pyglet.window.Window):
@@ -16,9 +17,18 @@ class Window(pyglet.window.Window):
 
         pyglet.clock.schedule_interval(self.tick, 0.05)
 
+        self.label_batch = pyglet.graphics.Batch()
+
+        self.version_info_label = pyglet.text.Label(text=f"MCPYTHON PRE-ALPHA "+shared.VERSION_NAME, color=(0, 0, 0, 255), batch=self.label_batch)
+        self.fps_label = pyglet.text.Label(text="fps: -", color=(0, 0, 0, 255), batch=self.label_batch)
+
     def on_draw(self):
-        pyglet.gl.glClearColor(255, 255, 255, 255)
         self.clear()
+        pyglet.gl.glClearColor(1, 1, 1, 1)
+        self.version_info_label.y = self.get_size()[1] - self.version_info_label.content_height - 10
+        self.fps_label.text = "fps: "+str(pyglet.clock.get_fps())
+        self.fps_label.y = self.get_size()[1] - self.version_info_label.content_height - self.fps_label.content_height - 20
+        self.label_batch.draw()
 
     def tick(self, dt: float):
         if not self.process_handler.running:

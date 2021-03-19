@@ -1,6 +1,7 @@
 import typing
 
 import mcpython.rendering.block.AbstractBlockRenderer
+import mcpython.common.event.Registry
 
 
 class BlockRenderingManager:
@@ -17,8 +18,12 @@ class BlockRenderingManager:
         self.block2renderer[block] = renderer
         return self
 
-    def update_chunk_section_render(self):
-        pass
-
 
 manager = BlockRenderingManager()
+
+# The registry for all block renderers, for making them data-driveable
+BLOCK_RENDERER_REGISTRY = mcpython.common.event.Registry.Registry(
+    "minecraft:block_renderers",
+    mcpython.rendering.block.AbstractBlockRenderer.AbstractBlockRenderer,
+    target_is_class=True
+)

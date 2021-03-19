@@ -15,6 +15,9 @@ import os
 local = os.path.dirname(os.path.dirname(__file__))
 
 
+VERSION_NAME = "BUILD 38"
+
+
 class MC:
     MC_BASE_NAME = "21w08a"
     ASSET_SOURCE_URL = "https://launcher.mojang.com/v1/objects/3a008c012bd6bba29054701c7797493523660c57/client.jar"

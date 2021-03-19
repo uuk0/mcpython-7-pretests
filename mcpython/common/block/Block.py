@@ -1,9 +1,9 @@
 from mcpython.common.block import BlockState
-import mcpython.data.codec.AbstractCodec
-import mcpython.common.event.Registry
+from mcpython.data.codec.AbstractCodec import AbstractEncodeAble
+from mcpython.common.event.Registry import IRegistryContent
 
 
-class Block(mcpython.data.codec.AbstractCodec.AbstractEncodeAble, mcpython.common.event.Registry.IRegistryContent):
+class Block(AbstractEncodeAble, IRegistryContent):
     """
     Block Class
     Every instance represents a block "type"
@@ -24,6 +24,7 @@ class Block(mcpython.data.codec.AbstractCodec.AbstractEncodeAble, mcpython.commo
         destroyed_by_explosion=True,
         destroyed_by_player=True,
         default_model_state=None,
+        renderer=None,
     ):
         self.name = name
         self.destroyed_by_explosion = destroyed_by_explosion
@@ -49,6 +50,8 @@ class Block(mcpython.data.codec.AbstractCodec.AbstractEncodeAble, mcpython.commo
         self.blocks_vision = True
         self.dynamic_bounds = False
         self.drops_like = None
+
+        self.renderer = renderer
 
     def setMaterial(self, material: str):
         self.material = material

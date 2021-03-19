@@ -20,3 +20,9 @@ Started writing this test on 20.02.2021
 [uuk]: some more API work
 [uuk]: removed nuitka build output until a final solution is found
 [uuk]: written some docs and linked some stuff
+[uuk]: some writeup on the rendering part of the block system
+
+near-future plan:
+- implement default block renderer and test on first blocks
+- implement CODEC handler system, including for block registry
+- implement debug world generator for testing blocks out

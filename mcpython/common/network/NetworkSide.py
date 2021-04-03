@@ -22,5 +22,8 @@ class NetworkSide(enum.Enum):
         return hash(self.is_client) * 10 + hash(self.is_server)
 
     def __eq__(self, other):
-        return isinstance(other, NetworkSide) and self.is_client == other.is_client and self.is_server == other.is_server
-
+        return (
+            isinstance(other, NetworkSide)
+            and self.is_client == other.is_client
+            and self.is_server == other.is_server
+        )

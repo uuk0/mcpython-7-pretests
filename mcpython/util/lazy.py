@@ -58,4 +58,3 @@ class LazyOptional:
 
     def __repr__(self):
         return f"LazyOptional(getter={self.__getter},value_set={self.__cache_set},cached={repr(self.__cache)})"
-

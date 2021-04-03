@@ -25,5 +25,5 @@ manager = BlockRenderingManager()
 BLOCK_RENDERER_REGISTRY = mcpython.common.event.Registry.Registry(
     "minecraft:block_renderers",
     mcpython.rendering.block.AbstractBlockRenderer.AbstractBlockRenderer,
-    target_is_class=True
+    target_is_class=True,
 )

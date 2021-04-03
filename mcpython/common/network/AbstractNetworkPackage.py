@@ -14,6 +14,8 @@ class AbstractPackage(mcpython.common.event.Registry.IRegistryContent, abc.ABC):
 
     A package should behave identical when "put" as it is on the other side of the network, without serialization
     This can happen on local worlds not open to lan.
+
+    todo: maybe add a way to optional allow answers
     """
 
     # The process the target should be invoked on. Leave None for immediate execution
@@ -24,7 +26,11 @@ class AbstractPackage(mcpython.common.event.Registry.IRegistryContent, abc.ABC):
     SENDER_EXPECTS_ANSWER = False
 
     @classmethod
-    def handle(cls, side: mcpython.common.network.NetworkSide.NetworkSide, package: "AbstractPackage"):
+    def handle(
+        cls,
+        side: mcpython.common.network.NetworkSide.NetworkSide,
+        package: "AbstractPackage",
+    ):
         """
         Called on the defined process above with the side we are on [Real side or None, not BOTH]
         :param side: the side
@@ -32,7 +38,12 @@ class AbstractPackage(mcpython.common.event.Registry.IRegistryContent, abc.ABC):
         """
 
     @classmethod
-    def handle_answer(cls, side: mcpython.common.network.NetworkSide.NetworkSide, previous: "AbstractPackage", answer: "AbstractPackage"):
+    def handle_answer(
+        cls,
+        side: mcpython.common.network.NetworkSide.NetworkSide,
+        previous: "AbstractPackage",
+        answer: "AbstractPackage",
+    ):
         """
         Called when SENDER_EXPECTS_ANSWER is True and an answer to this package is received additional to the handle()
         method of the answer package
@@ -45,7 +56,9 @@ class AbstractPackage(mcpython.common.event.Registry.IRegistryContent, abc.ABC):
         """
 
     @classmethod
-    def deserialize(cls, side: mcpython.common.network.NetworkSide.NetworkSide, data_stream):
+    def deserialize(
+        cls, side: mcpython.common.network.NetworkSide.NetworkSide, data_stream
+    ):
         pass
 
     def __init__(self):
@@ -56,13 +69,16 @@ class AbstractPackage(mcpython.common.event.Registry.IRegistryContent, abc.ABC):
         # The package id of the previous package, only serialized when SENDER_EXPECTS_ANSWER is True
         self.previous_package = -1
 
-    def serialize(self, side: mcpython.common.network.NetworkSide.NetworkSide, put_strean):
+    def serialize(
+        self, side: mcpython.common.network.NetworkSide.NetworkSide, put_strean
+    ):
         pass
 
     def answer(self, package: "AbstractPackage"):
-        assert self.SENDER_EXPECTS_ANSWER
+        assert (
+            self.SENDER_EXPECTS_ANSWER
+        ), "package does not want an answer. Please set SENDER_EXPECTS_ANSWER to True for making this work"
 
         package.previous_package = self.package_id
 
         # todo: send to the other side
-

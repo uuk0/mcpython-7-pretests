@@ -13,6 +13,7 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent, ABC):
     def on_kill(self):
         pass
 
-    def on_player_interaction(self, player, ray_cast_result, button: int, modifiers: int) -> bool:
+    def on_player_interaction(
+        self, player, ray_cast_result, button: int, modifiers: int
+    ) -> bool:
         return False
-

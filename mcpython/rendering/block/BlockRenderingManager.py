@@ -18,6 +18,9 @@ class BlockRenderingManager:
         self.block2renderer[block] = renderer
         return self
 
+    def setup(self):
+        from mcpython.rendering.block import DefaultBlockRenderer
+
 
 manager = BlockRenderingManager()
 

@@ -11,11 +11,17 @@ class BlockState:
         self.position = None
         self.dimension = None
         self.block_class = None
-        self.state = {}  # todo: something better
-        self.nbt = {}  # todo: something better, maybe dynamically created?
+        self.state = {}  # todo: something better, and None if not used
+        self.nbt = (
+            {}
+        )  # todo: something better, maybe dynamically created?, and None if not used
 
         # Marks the block state "dirty", meaning it must be saved
         self.dirty = False
+
+        # A list of section cache entries used by this block state. Used during cleanup. Must be of the section cache
+        # assigned with this block.
+        self.section_cache_entries = []
 
     def can_be_destroyed_by_explosion(
         self,

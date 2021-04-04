@@ -78,6 +78,7 @@ class Registry:
         assert not validate or self.validate(obj), (
             "object is invalid in registry " + self.name
         )
+        assert obj.NAME is not None, f"NAME must be set on object {obj}"
 
         if obj.NAME in self.content:
             if override_existing:

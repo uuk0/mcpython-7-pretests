@@ -2,7 +2,7 @@ import typing
 
 import pyglet
 
-import mcpython.rendering.util.OffsetBatchGroup
+import mcpython.rendering.util.Groups
 
 
 class DimensionRenderingCache:
@@ -19,17 +19,21 @@ class DimensionRenderingCache:
     """
 
     def __init__(self):
+        # These are the two batches used for rendering; todo: use groups for them instead of two separate ones
         self.normal_batch = pyglet.graphics.Batch()
         self.alpha_batch = pyglet.graphics.Batch()
 
     def create_normal_vertex_list(
         self, offset: typing.Tuple[int, int, int], group: pyglet.graphics.Group = None
     ) -> pyglet.graphics.vertexdomain.VertexList:
-        # this is magic... todo: migrate from Quads to triangles, as quars are not as optimal in some cases
+        # this is magic...
+        # todo: migrate from Quads to triangles, as quads are not as optimal in some cases
+        #   see e.g. https://stackoverflow.com/questions/14555446/opengl-is-it-more-efficient-to-use-gl-quads-or-gl-triangles and
+        #   https://community.amd.com/t5/opengl-vulkan/gl-quads-too-slow-performance-vs-gl-triangle-strip/td-p/124481
         return self.normal_batch.add(
             0,
             pyglet.gl.GL_QUADS,
-            mcpython.rendering.util.OffsetBatchGroup.OffsetBatchGroup(offset, group),
+            mcpython.rendering.util.Groups.OffsetBatchGroup(offset, group),
             ("v3d", tuple()),
             ("t2d", tuple()),
         )
@@ -37,11 +41,11 @@ class DimensionRenderingCache:
     def create_alpha_vertex_list(
         self, offset: typing.Tuple[int, int, int], group: pyglet.graphics.Group = None
     ) -> pyglet.graphics.vertexdomain.VertexList:
-        # this is magic... todo: migrate from Quads to triangles, as quars are not as optimal in some cases
+        # same as normal vertex list, but for the alpha part
         return self.alpha_batch.add(
             0,
             pyglet.gl.GL_QUADS,
-            mcpython.rendering.util.OffsetBatchGroup.OffsetBatchGroup(offset, group),
+            mcpython.rendering.util.Groups.OffsetBatchGroup(offset, group),
             ("v3d", tuple()),
             ("t2d", tuple()),
         )

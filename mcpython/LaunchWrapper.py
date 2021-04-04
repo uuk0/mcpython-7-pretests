@@ -22,6 +22,8 @@ def rendering(handler):
 
     mcpython.common.event.Events.WINDOW_CREATION.call(window)
 
+    mcpython.rendering.block.BlockRenderingManager.manager.setup()
+
     pyglet.clock.schedule_interval(handler.fetch, 0.3)
     pyglet.app.run()
 

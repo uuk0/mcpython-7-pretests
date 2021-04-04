@@ -1,5 +1,21 @@
 
 Started writing this test on 20.02.2021
+This code is testing out some stuff not testable in a running system. It prepares for the main development
+cycles of mcpython 7. It may be very broken at any point. It will likely never be production ready.
+
+The following systems are planned on testing:
+- efficient rendering, including blocks & entities, post vertex modification, etc.
+- CODEC system for dynamically extending data decoders
+- networking with client/server separation
+- advanced storage functionality with global/local registries
+- part-wise data driven modding system
+- shaders with pyglet 2
+- compilation to .exe and similar
+- multiprocessing
+- runtime method code modification via code
+- mod reload during runtime
+
+
 [uuk]: implemented multiprocessing system
 [uuk]: implemented build system
 [uuk]: implemented basic codec API
@@ -21,8 +37,10 @@ Started writing this test on 20.02.2021
 [uuk]: removed nuitka build output until a final solution is found
 [uuk]: written some docs and linked some stuff
 [uuk]: some writeup on the rendering part of the block system
+[uuk]: started implementing rendering stuff for batch rendering [WIP]
 
 near-future plan:
 - implement default block renderer and test on first blocks
-- implement CODEC handler system, including for block registry
+- Codec for block models & states
+- implement CODEC handler system, for loading stuff, including for block registry
 - implement debug world generator for testing blocks out

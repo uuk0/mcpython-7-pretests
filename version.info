@@ -38,9 +38,12 @@ The following systems are planned on testing:
 [uuk]: written some docs and linked some stuff
 [uuk]: some writeup on the rendering part of the block system
 [uuk]: started implementing rendering stuff for batch rendering [WIP]
+[uuk]: added safe variant for printing across processes
+[uuk]: cleaned up some stuff around process management
 
 near-future plan:
 - implement default block renderer and test on first blocks
 - Codec for block models & states
 - implement CODEC handler system, for loading stuff, including for block registry
 - implement debug world generator for testing blocks out
+- block collisions, ray tracing of blocks from player

@@ -11,6 +11,7 @@ def rendering(handler):
     todo: setup rendering Pipe
     todo: add custom clock
     """
+    handler.print_safe("launching window...")
     import pyglet
     import mcpython.rendering.Window
 

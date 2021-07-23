@@ -14,6 +14,7 @@ class DefaultBlockRenderer(
     Uses the common API at Block(State)
     Registered under
     """
+
     NAME = "minecraft:default_block_renderer"
 
     def add_block_to_section(

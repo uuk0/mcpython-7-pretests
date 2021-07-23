@@ -42,7 +42,8 @@ def deserialize_task(
     :param data: the data to deserialize from
     :return: a tuple of a function invoking the code, and the args and optional kwargs to call with
     """
-    if isinstance(data, tuple): data = data[0]
+    if isinstance(data, tuple):
+        data = data[0]
     assert isinstance(data, bytes), f"pickling will fail on provided data: {data}"
 
     code, args, kwargs, is_lambda = pickle.loads(data)
@@ -161,7 +162,7 @@ class RemoteProcessHandler:
         process_name: str,
         task: typing.Union[typing.Callable, str],
         *args,
-        **kwargs
+        **kwargs,
     ):
         """
         Executes a task on another process
@@ -171,16 +172,11 @@ class RemoteProcessHandler:
         :param args: the args
         :param kwargs: the kwargs
         """
-        data = serialize_task(task, args, kwargs if len(kwargs) > 0 else None),
+        data = (serialize_task(task, args, kwargs if len(kwargs) > 0 else None),)
         if process_name == self.name:
             self.on_process_queue.put(data)
         else:
-            self.other_process_queue.put(
-                (
-                    process_name,
-                    data
-                )
-            )
+            self.other_process_queue.put((process_name, data))
 
     def stop(self, exit_code=0):
         """
@@ -290,7 +286,9 @@ def maintain():
                     # todo: check for name existence
                     PROCESS_HANDLERS[target_process].on_process_queue.put(data)
                 else:
-                    print(f"[PROCESS MANAGER][FATAL] failed to send task to process '{target_process}', as it was never spawned")
+                    print(
+                        f"[PROCESS MANAGER][FATAL] failed to send task to process '{target_process}', as it was never spawned"
+                    )
 
             # This is a queue for printing stuff on the main process
             while not handler.print_queue.empty():

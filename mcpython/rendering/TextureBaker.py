@@ -30,7 +30,9 @@ class TextureBaker:
             self.id = uuid.uuid4()  # this may be needed, there might be a better bake
             self.added = False
             self.baker: typing.Optional["TextureBaker"] = None
-            self.position: typing.Optional[typing.Tuple[float, float, float, float]] = None
+            self.position: typing.Optional[
+                typing.Tuple[float, float, float, float]
+            ] = None
 
         def get_texture(self) -> pyglet.image.Texture:
             """
@@ -46,7 +48,9 @@ class TextureBaker:
             assert self.added, "texture atlas must be baked before referencing it"
             return self.baker.internal_texture_group
 
-        def get_uv(self, section=(0, 0, 1, 1)) -> typing.Tuple[float, float, float, float]:
+        def get_uv(
+            self, section=(0, 0, 1, 1)
+        ) -> typing.Tuple[float, float, float, float]:
             """
             Returns the UV's for this texture section on the texture atlas
             :param section: the section of the texture
@@ -57,7 +61,12 @@ class TextureBaker:
             sx, sy = self.baker.grid_size
             # todo: is this correct and the best way?
             # todo: cache & invalidate by last bake cycle
-            return x / sx + ax / sx, y / sy + ay / sy, (x+1) / sx - (1-bx) / sx, (y+1) / sy - (1-by) / sy
+            return (
+                x / sx + ax / sx,
+                y / sy + ay / sy,
+                (x + 1) / sx - (1 - bx) / sx,
+                (y + 1) / sy - (1 - by) / sy,
+            )
 
     def __init__(self):
         self.references = {}
@@ -93,7 +102,9 @@ class TextureBaker:
         self.pending_images += 1
         return reference
 
-    def add_texture(self, texture: PIL.Image.Image, reference=None, decrease_counter=False) -> TextureReference:
+    def add_texture(
+        self, texture: PIL.Image.Image, reference=None, decrease_counter=False
+    ) -> TextureReference:
         """
         Adds a texture into the internal texture array
         :param texture: the texture
@@ -112,7 +123,8 @@ class TextureBaker:
         reference.baker = self
         self.pending_textures.add((reference.id, texture))
 
-        if decrease_counter: self.pending_images -= 1
+        if decrease_counter:
+            self.pending_images -= 1
         return reference
 
     def bake(self):

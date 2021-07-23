@@ -95,8 +95,8 @@ class ChunkSectionCache:
 
         # todo: is this correct?
         buffer.resize(index + len(vertices) // 3)
-        buffer.vertices[len(vertices):] = vertices
-        buffer.tex_coords[len(texture_coordinates):] = texture_coordinates
+        buffer.vertices[len(vertices) :] = vertices
+        buffer.tex_coords[len(texture_coordinates) :] = texture_coordinates
 
         # todo: something better!
         return index if target.value == 0 else -index - 1

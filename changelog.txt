@@ -1,6 +1,13 @@
 
 
-changelog of <unknown> developed from 20.2.2021 until <unknown> released on <unknown> [build 1 - <...>]
+changelog of Iteration 2 developed from 21.07.2021 until <?>
+    Bumped pyglet target version to 2.0
+    This makes shaders possible
+    Rewritten the internal event manager to a self-written multi-processing async module (called asyncm in code)
+    Stripped most of the code from the iteration before out, until we know what we need again
+
+
+changelog of Iteration 1 developed from 20.2.2021 until 20.07.2021 [no public release] [build 1 - 38]
     The basic stuff, foundation work
     A lot of API work
     Everything WIP

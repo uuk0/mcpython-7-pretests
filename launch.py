@@ -1,7 +1,5 @@
-import mcpython.LaunchWrapper
-
-wrapper = mcpython.LaunchWrapper.LaunchWrapper()
+import mcpython.LaunchManager
 
 if __name__ == "__main__":
-    wrapper.setup()
+    wrapper = mcpython.LaunchManager.LaunchManager()
     wrapper.launch()

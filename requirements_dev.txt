@@ -1,5 +1,5 @@
-nuitka==0.6.13
-python_minifier==2.4.1
+nuitka==0.6.16.2
+python_minifier==2.4.2
 
-# Black is our formatter, but it is not publically released yet, so here goes the raw github link
+# Black is our formatter, but it is not publicly released yet, so here goes the raw github link
 git+git://github.com/psf/black

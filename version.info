@@ -41,6 +41,18 @@ The following systems are planned on testing:
 [uuk]: added safe variant for printing across processes
 [uuk]: cleaned up some stuff around process management
 
++---------------------------+
+| [dev]: End of Iteration 1 |
++---------------------------+
+[uuk]: using now another implementation for async process management
+[uuk]: bumped some dependency versions
+[uuk]: using now pyglet 2.0dev5 for rendering
+
+
+WARNING:
+pyglet 2.0 currently has some problems with the way we spawn windows. You may need to modify the pyglet code
+in order to make it work
+
 near-future plan:
 - implement default block renderer and test on first blocks
 - Codec for block models & states

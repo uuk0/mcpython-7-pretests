@@ -51,19 +51,20 @@ class Window(pyglet.window.Window):
         EventSync.invokeEventFromOutside(event)
 
     def on_mouse_motion(self, x, y, dx, dy):
-        pass
+        event = Events.MouseMotionEvent(x, y, dx, dy)
+        EventSync.invokeEventFromOutside(event)
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
-        pass
+        event = Events.MouseMotionEvent(x, y, dx, dy, buttons, modifiers)
+        EventSync.invokeEventFromOutside(event)
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
-        pass
+        event = Events.MouseWheelScrollEvent((x, y), scroll_x+scroll_y)
+        EventSync.invokeEventFromOutside(event)
 
     def on_resize(self, width, height):
-        pass
-
-    def on_text(self, text):
-        pass
+        event = Events.WindowResizeEvent(width, height)
+        EventSync.invokeEventFromOutside(event)
 
     def on_context_lost(self):
         for button in self.mouse_press_timers.keys():

@@ -210,6 +210,8 @@ class TaskManager:
 
     def close(self):
         async def stop(side: "SpawnedProcessInfo"):
+            import asyncio
+
             side.sided_task_manager.main_obj.stop()
             asyncio.get_event_loop().stop()
 
@@ -263,6 +265,13 @@ class AsyncProcessManager:
         ].sided_task_manager
         info.sided_task_manager.is_on_main = True
         info.sided_task_manager.main_obj = self
+
+        async def setup(side: SpawnedProcessInfo):
+            import mcpython.shared
+
+            mcpython.shared.async_side_instance = side
+
+        self.run_regular_on_process(name, setup)
 
         return info
 

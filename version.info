@@ -16,6 +16,9 @@ The following systems are planned on testing:
 - mod reload during runtime
 
 
++-----------------------------+
+| [dev]: Begin of Iteration 1 |
++-----------------------------+
 [uuk]: implemented multiprocessing system
 [uuk]: implemented build system
 [uuk]: implemented basic codec API
@@ -40,22 +43,25 @@ The following systems are planned on testing:
 [uuk]: started implementing rendering stuff for batch rendering [WIP]
 [uuk]: added safe variant for printing across processes
 [uuk]: cleaned up some stuff around process management
-
 +---------------------------+
 | [dev]: End of Iteration 1 |
 +---------------------------+
-[uuk]: using now another implementation for async process management
+
++-----------------------------+
+| [dev]: Begin of Iteration 2 |
++-----------------------------+
+[uuk]: using now another implementation for async process management called asyncm
 [uuk]: bumped some dependency versions
 [uuk]: using now pyglet 2.0dev5 for rendering
+[uuk]: written some bindings to execute interaction events on other processes
+[uuk]: window interaction events are now routed onto the correct process and can be bound to know
 
 
 WARNING:
 pyglet 2.0 currently has some problems with the way we spawn windows. You may need to modify the pyglet code
 in order to make it work
 
-near-future plan:
-- implement default block renderer and test on first blocks
-- Codec for block models & states
-- implement CODEC handler system, for loading stuff, including for block registry
-- implement debug world generator for testing blocks out
-- block collisions, ray tracing of blocks from player
+Plans for now:
+- make pyglet do some stuff
+- add some world system, with basic block class
+- add renderer for block models (basic TextureAtlas needed!)

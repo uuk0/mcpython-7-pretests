@@ -16,17 +16,23 @@ class PygletDataManager:
 
         import pyglet
 
-        self.temp_win: typing.Optional[pyglet.window.Window] = pyglet.window.Window(caption="Temporary Window")
+        self.temp_win: typing.Optional[pyglet.window.Window] = pyglet.window.Window(
+            caption="Temporary Window"
+        )
 
         self.event_loop = pyglet.app.event_loop
         self.platform_event_loop = pyglet.app.platform_event_loop
 
     async def setup(self):
         import pyglet
-        self.event_loop.clock.schedule_interval_soft(self.event_loop._redraw_windows, 1/60)  # these are the MAX FPS
+
+        self.event_loop.clock.schedule_interval_soft(
+            self.event_loop._redraw_windows, 1 / 60
+        )  # these are the MAX FPS
         self.event_loop.has_exit = False
 
         from pyglet.window import Window
+
         Window._enable_event_queue = False
 
         for window in pyglet.app.windows:
@@ -96,7 +102,8 @@ class PygletDataManager:
             await invoke_with_window(self, win)
 
     async def step(self, _):
-        if self.window_spawn_in_progress: return
+        if self.window_spawn_in_progress:
+            return
 
         if self.temp_win is not None:
             self.temp_win.close()

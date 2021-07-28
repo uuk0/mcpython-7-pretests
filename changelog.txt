@@ -6,6 +6,10 @@ changelog of Iteration 2 developed from 21.07.2021 until <?>
     Rewritten the internal event manager to a self-written multi-processing async module (called asyncm in code)
     Stripped most of the code from the iteration before out, until we know what we need again
 
+    Things to merge:
+        from mcpython-4:
+            - command node system
+
 
 changelog of Iteration 1 developed from 20.2.2021 until 20.07.2021 [no public release] [build 1 - 38]
     The basic stuff, foundation work
@@ -13,11 +17,5 @@ changelog of Iteration 1 developed from 20.2.2021 until 20.07.2021 [no public re
     Everything WIP
     see version.info for detail changes
 
-
-Future stuff:
-    - event handling system, with fast calls and skips for no events [EventDispatcherInstance calling, EventSubscriber receiving?]
-    - a chat system with command integration
-    - a save game system [API at world side finished] with a data fixer API
-    - entity system with rendering [API at world side WIP]
 
 

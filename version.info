@@ -1,19 +1,8 @@
 
-Started writing this test on 20.02.2021
+Started writing this tests on 20.02.2021
 This code is testing out some stuff not testable in a running system. It prepares for the main development
 cycles of mcpython 7. It may be very broken at any point. It will likely never be production ready.
-
-The following systems are planned on testing:
-- efficient rendering, including blocks & entities, post vertex modification, etc.
-- CODEC system for dynamically extending data decoders
-- networking with client/server separation
-- advanced storage functionality with global/local registries
-- part-wise data driven modding system
-- shaders with pyglet 2
-- compilation to .exe and similar
-- multiprocessing
-- runtime method code modification via code
-- mod reload during runtime
+The process is split into "iterations" each implementing some features and merging features from previous iterations
 
 
 +-----------------------------+
@@ -55,6 +44,8 @@ The following systems are planned on testing:
 [uuk]: using now pyglet 2.0dev5 for rendering
 [uuk]: written some bindings to execute interaction events on other processes
 [uuk]: window interaction events are now routed onto the correct process and can be bound to know
+[uuk]: added new texture atlas implementation
+[uuk]: added a new resource loader implementation
 
 
 WARNING:

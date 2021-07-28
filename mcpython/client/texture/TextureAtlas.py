@@ -6,6 +6,15 @@ import pyglet
 from mcpython import shared
 
 
+async def lookup_resource(side, file: str):
+    f = shared.local+"/tmp."+file.split(".")[-1]
+    shared.resource_manager.read_to_file(file, f)
+
+    import PIL.Image
+
+    return PIL.Image.open(f)
+
+
 class TextureAtlas:
     def __init__(self):
         self.foundation_image = PIL.Image.new("RGBA", (16*32, 16*32), (0, 0, 0, 0))
@@ -20,7 +29,7 @@ class TextureAtlas:
 
         x, y = self.cursor
         self.foundation_image.paste(image, (x*16, y*16))
-        pos = self.file2position[file_name] = x, y
+        pos = self.file2position[file_name] = x, self.entries[1]-y-1
 
         x += 1
         if x >= self.entries[0]:
@@ -33,6 +42,12 @@ class TextureAtlas:
         self.cursor = x, y
 
         return pos
+
+    async def async_add_texture(self, file_name: str):
+        if file_name in self.file2position: return self.file2position[file_name]
+
+        image = await shared.async_side_instance.sided_task_manager.invokeOn("data_processing", lookup_resource, file_name)
+        return self.add_texture(file_name, image)
 
     def bake(self):
         self.foundation_image.save(shared.local+"/texture_atlas.png")

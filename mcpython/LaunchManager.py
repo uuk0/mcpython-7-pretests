@@ -7,6 +7,13 @@ async def spawn_window(side: asyncm.Manager.SpawnedProcessInfo):
         "mcpython.client.rendering.Window", "Window"
     )
 
+    # import mcpython.client.texture.TextureAtlas
+    # atlas = mcpython.client.texture.TextureAtlas.TextureAtlas()
+    # await atlas.async_add_texture("assets/minecraft/textures/block/stone.png")
+    # await atlas.async_add_texture("assets/minecraft/textures/block/oak_planks.png")
+    # await atlas.async_add_texture("assets/minecraft/textures/block/bedrock.png")
+    # atlas.bake()
+
 
 class LaunchManager:
     def __init__(self):

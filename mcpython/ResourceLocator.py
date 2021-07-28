@@ -102,6 +102,10 @@ class ResourceManager:
     def read(self, file: str):
         return self.get_lookup_for_file(file).load(file)
 
+    def read_to_file(self, file: str, output: str):
+        with open(output, mode="wb") as f:
+            f.write(self.read(file))
+
     def walk(self, directory: str):
         for lookup in self.lookups:
             yield from lookup.walk(directory)

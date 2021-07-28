@@ -9,13 +9,13 @@ GLOBAL_INITED = False
 def init_global():
     global GLOBAL_INITED
 
-    if not GLOBAL_INITED:
+    if GLOBAL_INITED:
         return
 
     exec(
         """
-    import time, os, asyncio
-    from mcpython import shared
+import time, os, asyncio
+from mcpython import shared
     """,
         GLOBAL,
     )

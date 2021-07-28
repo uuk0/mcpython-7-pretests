@@ -46,6 +46,7 @@ The process is split into "iterations" each implementing some features and mergi
 [uuk]: window interaction events are now routed onto the correct process and can be bound to know
 [uuk]: added new texture atlas implementation
 [uuk]: added a new resource loader implementation
+[uuk]: added async variant for adding textures to a texture atlas
 
 
 WARNING:

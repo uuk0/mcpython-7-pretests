@@ -33,11 +33,18 @@ class LaunchManager:
         # the process handling networking
         self.async_manager.add_process("network")
 
+        import mcpython.common.network.NetworkManager
+
+        self.async_manager.run_regular_on_process(
+            "network", mcpython.common.network.NetworkManager.setup
+        )
+
         # A general data processing & preparation process
         # Contains the system to read/write files
         self.async_manager.add_process("data_processing")
 
         import mcpython.ResourceLocator
+
         self.async_manager.run_regular_on_process(
             "data_processing", mcpython.ResourceLocator.setup_side
         )

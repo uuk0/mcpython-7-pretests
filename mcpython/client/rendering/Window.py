@@ -59,7 +59,7 @@ class Window(pyglet.window.Window):
         EventSync.invokeEventFromOutside(event)
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
-        event = Events.MouseWheelScrollEvent((x, y), scroll_x+scroll_y)
+        event = Events.MouseWheelScrollEvent((x, y), scroll_x + scroll_y)
         EventSync.invokeEventFromOutside(event)
 
     def on_resize(self, width, height):

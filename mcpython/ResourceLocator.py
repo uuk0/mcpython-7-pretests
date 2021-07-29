@@ -38,8 +38,8 @@ class ResourceDirectoryLookup(AbstractResourceLookupLocation):
 
     def walk(self, directory: str) -> typing.Iterable[str]:
         for root, files, _ in os.walk(os.path.join(self.path, directory)):
-            yield root[len(self.path)+1:]+"/"
-            yield from (os.path.join(root, e)[len(self.path)+1:] for e in files)
+            yield root[len(self.path) + 1 :] + "/"
+            yield from (os.path.join(root, e)[len(self.path) + 1 :] for e in files)
 
 
 class ResourceZipfileLookup(AbstractResourceLookupLocation):
@@ -115,5 +115,6 @@ async def setup_side(_):
     from mcpython import shared, ResourceLocator
 
     shared.resource_manager = ResourceLocator.ResourceManager()
-    shared.resource_manager.add_static_resource_lookup(ResourceLocator.ResourceZipfileLookup(shared.local+"/source.zip"))
-
+    shared.resource_manager.add_static_resource_lookup(
+        ResourceLocator.ResourceZipfileLookup(shared.local + "/source.zip")
+    )

@@ -57,7 +57,9 @@ class MouseMotionEvent(Event):
 
     __slots__ = ("x", "y", "dx", "dy", "button", "mods")
 
-    def __init__(self, x: int, y: int, dx: int, dy: int, button: int = 0, mods: int = 0):
+    def __init__(
+        self, x: int, y: int, dx: int, dy: int, button: int = 0, mods: int = 0
+    ):
         super().__init__()
         self.x = x
         self.y = y

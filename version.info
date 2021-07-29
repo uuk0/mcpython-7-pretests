@@ -49,6 +49,8 @@ The process is split into "iterations" each implementing some features and mergi
 [uuk]: added async variant for adding textures to a texture atlas
 [uuk]: added a bit of networking code, abstracting the socket away from the programmer
 [uuk]: added "world" code and defined some behaviour on client/server instances
+[uuk]: added a system to spawn new worlds on the fly, for later use when joining a world
+[uuk]: added a handful of classes around world generation, but nothing implemnted yet
 
 
 WARNING:
@@ -59,3 +61,4 @@ Plans for now:
 - make pyglet do some stuff
 - add some world system, with basic block class
 - add renderer for block models (basic TextureAtlas needed!)
+- some system for world generation allowing to schedule blocks for other chunks

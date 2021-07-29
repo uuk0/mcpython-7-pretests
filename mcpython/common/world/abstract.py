@@ -1,11 +1,9 @@
 import typing
 from abc import ABC
 
-from mcpython import shared
-
 
 BLOCK_POSITION = typing.Tuple[int, int, int]
-CHUNK_POSITION: typing.Tuple[int, int]
+CHUNK_POSITION = typing.Tuple[int, int]
 
 
 class UnableToLoadChunkException(Exception):
@@ -32,8 +30,8 @@ class AbstractBlockAccess(ABC):
 
     async def add_block(
         self,
-        block_type,
         position: BLOCK_POSITION,
+        block_type,
         meta=None,
         invoke_block_updates=True,
         invoke_self_block_update=True,
@@ -73,6 +71,12 @@ class AbstractChunk(AbstractBlockAccess, ABC):
         pass
 
     def is_loaded(self) -> bool:
+        raise NotImplementedError
+
+    def is_generated(self) -> bool:
+        raise NotImplementedError
+
+    async def generate(self):
         raise NotImplementedError
 
     async def add_force_load_ticket(self, source: str):
@@ -119,6 +123,9 @@ class AbstractDimension(AbstractBlockAccess, ABC):
     def get_valid_height_range(self) -> typing.Tuple[int, int]:
         return 0, 255
 
+    async def generate_chunk(self, position: CHUNK_POSITION):
+        pass
+
 
 class AbstractWorld(ABC):
     async def save(self):
@@ -128,4 +135,7 @@ class AbstractWorld(ABC):
         pass
 
     async def get_dimension(self, name: str) -> AbstractDimension:
+        raise NotImplementedError
+
+    async def add_dimension(self, name: str) -> AbstractDimension:
         raise NotImplementedError

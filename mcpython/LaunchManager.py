@@ -3,7 +3,7 @@ import asyncm.pyglet_binding
 
 
 async def spawn_window(side: asyncm.Manager.SpawnedProcessInfo):
-    window = await side.pyglet_manager.spawn_custom_window(
+    await side.pyglet_manager.spawn_custom_window(
         "mcpython.client.rendering.Window", "Window"
     )
 
@@ -26,6 +26,12 @@ class LaunchManager:
 
         # the process storing the world and its information
         self.async_manager.add_process("world")
+
+        import mcpython.common.world.SessionWorldManager
+
+        self.async_manager.run_regular_on_process(
+            "world", mcpython.common.world.SessionWorldManager.setup_session_manager
+        )
 
         # the process for world generation
         self.async_manager.add_process("world_generation")

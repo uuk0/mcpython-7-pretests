@@ -13,7 +13,6 @@ from mcpython.common.world.abstract import BLOCK_POSITION
 from mcpython.common.world.abstract import CHUNK_POSITION
 
 import mcpython.util.math
-import collections
 
 
 class IntegratedChunk(mcpython.common.world.abstract.AbstractChunk):
@@ -22,6 +21,7 @@ class IntegratedChunk(mcpython.common.world.abstract.AbstractChunk):
         self.position = position
 
         self.loaded = True
+        self.generated = False
         self.force_load_tickets = set()
 
         self.world = {}
@@ -35,6 +35,9 @@ class IntegratedChunk(mcpython.common.world.abstract.AbstractChunk):
     def is_loaded(self) -> bool:
         return self.loaded
 
+    def is_generated(self) -> bool:
+        return self.generated
+
     async def add_force_load_ticket(self, source: str):
         self.force_load_tickets.add(source)
 
@@ -42,7 +45,11 @@ class IntegratedChunk(mcpython.common.world.abstract.AbstractChunk):
         self.force_load_tickets.remove(source)
 
     async def is_chunk_force_loaded(self, by: str = None) -> bool:
-        return (by in self.force_load_tickets) if by is not None else (len(self.force_load_tickets) > 0)
+        return (
+            (by in self.force_load_tickets)
+            if by is not None
+            else (len(self.force_load_tickets) > 0)
+        )
 
     async def enforce_no_force_load(self):
         self.force_load_tickets.clear()
@@ -66,7 +73,8 @@ class IntegratedChunk(mcpython.common.world.abstract.AbstractChunk):
     ):
         block = self.world.pop(position, None)
 
-        if block is None: return
+        if block is None:
+            return
 
     async def get_block(self, position: BLOCK_POSITION):
         return self.world.get(position, None)
@@ -77,12 +85,17 @@ class IntegratedChunk(mcpython.common.world.abstract.AbstractChunk):
     async def force_block_redraw(self, position: BLOCK_POSITION):
         pass
 
+    async def generate(self):
+        await self.dimension.chunk_generator.generate_chunk(self)
+
 
 class IntegratedDimension(mcpython.common.world.abstract.AbstractDimension):
     def __init__(self, name: str, world: "IntegratedWorld"):
         self.world = world
         self.name = name
         self.chunks: typing.Dict[CHUNK_POSITION, IntegratedChunk] = {}
+
+        self.chunk_generator = None
 
     def get_world(self) -> "IntegratedWorld":
         return self.world
@@ -114,7 +127,14 @@ class IntegratedDimension(mcpython.common.world.abstract.AbstractDimension):
         invoke_self_block_update=True,
         show_on_client=True,
     ):
-        return await (await self.get_chunk_for_position(position)).add_block(block_type, position, meta, invoke_block_updates, invoke_self_block_update, show_on_client)
+        return await (await self.get_chunk_for_position(position)).add_block(
+            position,
+            block_type,
+            meta,
+            invoke_block_updates,
+            invoke_self_block_update,
+            show_on_client,
+        )
 
     async def remove_block(
         self,
@@ -122,13 +142,21 @@ class IntegratedDimension(mcpython.common.world.abstract.AbstractDimension):
         invoke_block_updates=True,
         invoke_self_block_update=True,
     ):
-        return await (await self.get_chunk_for_position(position)).remove_block(position, invoke_block_updates, invoke_self_block_update)
+        return await (await self.get_chunk_for_position(position)).remove_block(
+            position, invoke_block_updates, invoke_self_block_update
+        )
 
     async def get_block(self, position: BLOCK_POSITION):
         return await (await self.get_chunk_for_position(position)).get_block(position)
 
     async def invoke_block_update_around(self, position: BLOCK_POSITION):
-        await (await self.get_chunk_for_position(position)).invoke_block_update_around(position)
+        await (await self.get_chunk_for_position(position)).invoke_block_update_around(
+            position
+        )
+
+    async def generate_chunk(self, position: CHUNK_POSITION):
+        chunk = await self.get_chunk(position)
+        await self.chunk_generator.generate_chunk(chunk)
 
 
 class IntegratedWorld(mcpython.common.world.abstract.AbstractWorld):
@@ -137,3 +165,8 @@ class IntegratedWorld(mcpython.common.world.abstract.AbstractWorld):
 
     async def get_dimension(self, name: str) -> AbstractDimension:
         return self.dimensions.get(name, None)
+
+    async def add_dimension(self, name: str) -> AbstractDimension:
+        dim = IntegratedDimension(name, self)
+        self.dimensions[name] = dim
+        return dim

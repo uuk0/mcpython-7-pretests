@@ -21,6 +21,8 @@ class SpawnedProcessInfo:
 
         self.pyglet_manager = None
 
+        self.run_later = []
+
     def spawn_main_task_manager(self):
         return TaskManager(
             self, self.off2main, self.off2main_data, self.main2off, self.main2off_data
@@ -140,6 +142,9 @@ class TaskManager:
             # else:
             # print("warn: result was not waited for!", self.waiting_awaits)
 
+        await asyncio.gather(*self.info.run_later)
+        self.info.run_later.clear()
+
     async def invokeOnMain(self, function, *args, ignore_result=False, **kwargs):
         if not ignore_result:
             internal_id = self.next_id
@@ -207,6 +212,18 @@ class TaskManager:
                 -1,
             )
         )
+
+    async def invokeOnAll(self, function, *args, include_main=False, **kwargs):
+        async def get_process_names(side: SpawnedProcessInfo):
+            return list(side.sided_task_manager.main_obj.lookup_processes.keys())
+
+        processes = await self.invokeOnMain(get_process_names)
+
+        for process in processes:
+            await self.invokeOn(process, function, *args, **kwargs)
+
+        if include_main:
+            await self.invokeOnMain(function, *args, **kwargs)
 
     def close(self):
         async def stop(side: "SpawnedProcessInfo"):

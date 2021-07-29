@@ -27,8 +27,11 @@ class AbstractPackage(ABC):
 class DefaultPackage(AbstractPackage, ABC):
     def serialize(self) -> bytes:
         body = self.serialize_internal()
-        return self.INTERNAL_PACKAGE_ID + len(body).to_bytes(self.PACKAGE_SIZE_SIZE, "big", signed=False) + body
+        return (
+            self.INTERNAL_PACKAGE_ID
+            + len(body).to_bytes(self.PACKAGE_SIZE_SIZE, "big", signed=False)
+            + body
+        )
 
     def serialize_internal(self) -> bytes:
         raise NotImplementedError
-

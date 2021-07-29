@@ -48,6 +48,7 @@ The process is split into "iterations" each implementing some features and mergi
 [uuk]: added a new resource loader implementation
 [uuk]: added async variant for adding textures to a texture atlas
 [uuk]: added a bit of networking code, abstracting the socket away from the programmer
+[uuk]: added "world" code and defined some behaviour on client/server instances
 
 
 WARNING:

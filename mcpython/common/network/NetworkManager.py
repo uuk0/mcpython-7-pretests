@@ -1,7 +1,14 @@
 import typing
 
 from mcpython import shared
-from mcpython.common.network.package.AbstractPackage import AbstractPackage, DefaultPackage
+from mcpython.common.network.package.AbstractPackage import (
+    AbstractPackage,
+    DefaultPackage,
+)
+
+
+async def set_client_var(side, state):
+    shared.is_client = state
 
 
 class NetworkManager:
@@ -13,29 +20,50 @@ class NetworkManager:
 
         self.package_handlers: typing.Dict[bytes, typing.Callable] = {}
 
+        # An access point to the internal world or a wrapper of it
+        self.side_world = None
+
     def spawn_client_network_instance(self):
         import mcpython.common.network.NetworkBuilder
 
-        self.side_manager = mcpython.common.network.NetworkBuilder.RemoteNetworkConnector()
+        self.side_manager = (
+            mcpython.common.network.NetworkBuilder.RemoteNetworkConnector()
+        )
         self.is_client = True
 
         shared.async_side_instance.call_regular = self.handle_client
 
+        shared.async_side_instance.run_later.append(
+            shared.async_side_instance.sided_task_manager.invokeOnAll(
+                set_client_var, True
+            )
+        )
+
     def spawn_server_network_instance(self):
         import mcpython.common.network.NetworkBuilder
 
-        self.side_manager = (
-            mcpython.common.network.NetworkBuilder.NetworkBuilder()
-        )
+        self.side_manager = mcpython.common.network.NetworkBuilder.NetworkBuilder()
         self.is_client = False
 
         shared.async_side_instance.call_regular = self.handle_server
+
+        shared.async_side_instance.run_later.append(
+            shared.async_side_instance.sided_task_manager.invokeOnAll(
+                set_client_var, False
+            )
+        )
 
     def disconnect(self):
         if self.side_manager is not None:
             self.side_manager.disconnect()
         self.is_client = None
         shared.async_side_instance.call_regular = None
+
+        shared.async_side_instance.run_later.append(
+            shared.async_side_instance.sided_task_manager.invokeOnAll(
+                set_client_var, None
+            )
+        )
 
     def send(self, package: AbstractPackage, target: int = -1):
         if self.is_client is True:

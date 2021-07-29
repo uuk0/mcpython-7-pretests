@@ -10,3 +10,5 @@ local = os.path.dirname(os.path.dirname(__file__))
 
 resource_manager = None
 network_manager = None
+
+is_client = None
